@@ -126,14 +126,14 @@ const Launch = () => {
                   <Input id="meeting-title" placeholder="Enter meeting title" />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2 min-w-0">
-                    <Label htmlFor="meeting-date">Date</Label>
-                    <Input id="meeting-date" type="date" className="w-full" />
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5 min-w-0">
+                    <Label htmlFor="meeting-date" className="text-xs">Date</Label>
+                    <Input id="meeting-date" type="date" className="w-full h-8 text-sm" />
                   </div>
-                  <div className="space-y-2 min-w-0">
-                    <Label htmlFor="meeting-time">Time</Label>
-                    <Input id="meeting-time" type="time" className="w-full" />
+                  <div className="space-y-1.5 min-w-0">
+                    <Label htmlFor="meeting-time" className="text-xs">Time</Label>
+                    <Input id="meeting-time" type="time" className="w-full h-8 text-sm" />
                   </div>
                 </div>
 
