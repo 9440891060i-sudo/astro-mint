@@ -7,7 +7,6 @@ type TabType = "home" | "launch" | "trade" | "reels" | "assets";
 const BottomNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [activeTab, setActiveTab] = useState<TabType>("home");
 
   const tabs = [
     { id: "home" as TabType, icon: Home, label: "Home", path: "/" },
@@ -18,7 +17,6 @@ const BottomNav = () => {
   ];
 
   const handleTabClick = (tab: typeof tabs[0]) => {
-    setActiveTab(tab.id);
     navigate(tab.path);
   };
 
@@ -27,7 +25,7 @@ const BottomNav = () => {
       <div className="max-w-2xl mx-auto flex items-center justify-around h-16">
         {tabs.map((tab) => {
           const Icon = tab.icon;
-          const isActive = activeTab === tab.id;
+          const isActive = location.pathname === tab.path;
           const isMainAction = tab.id === "trade";
 
           return (
