@@ -433,27 +433,29 @@ const Trade = () => {
                     variant="ghost"
                     size="icon"
                     onClick={() => setShowSavedOnly(!showSavedOnly)}
-                    className="h-12 w-12 flex-shrink-0 rounded-full hover:bg-muted"
+                    className={`h-12 w-12 flex-shrink-0 rounded-full transition-colors ${showSavedOnly ? 'bg-foreground hover:bg-foreground/90' : 'hover:bg-muted'}`}
                     title={showSavedOnly ? "Show all sellers" : "Show saved sellers"}
                   >
-                    <Bookmark className={`w-5 h-5 ${showSavedOnly ? 'fill-foreground' : ''}`} />
+                    <Bookmark className={`w-5 h-5 transition-all ${showSavedOnly ? 'fill-background text-background' : 'text-foreground'}`} />
                   </Button>
                 </div>
 
                 {/* Category Tags */}
                 <div className="bg-muted rounded-xl p-4 mb-6 max-h-48 overflow-y-auto">
                   <div className="flex flex-wrap gap-2">
-                    {categories.map((category) => (
-                      <Badge
-                        key={category}
-                        variant={selectedCategories.includes(category) ? "default" : "outline"}
-                        onClick={() => handleCategoryClick(category)}
-                        className="bg-background hover:bg-foreground hover:text-background cursor-pointer transition-all data-[selected=true]:bg-primary data-[selected=true]:text-primary-foreground"
-                        data-selected={selectedCategories.includes(category)}
-                      >
-                        {category}
-                      </Badge>
-                    ))}
+                    {categories.map((category) => {
+                      const isSelected = selectedCategories.includes(category);
+                      return (
+                        <Badge
+                          key={category}
+                          variant={isSelected ? "default" : "outline"}
+                          onClick={() => handleCategoryClick(category)}
+                          className="cursor-pointer transition-all"
+                        >
+                          {category}
+                        </Badge>
+                      );
+                    })}
                   </div>
                 </div>
 
