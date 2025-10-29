@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, Calendar, Clock, Users, Code, TrendingUp } from "lucide-react";
+import { ChevronDown, Calendar, Clock, Users, Code, TrendingUp, Filter } from "lucide-react";
 import TopBar from "@/components/TopBar";
 import BottomNav from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
@@ -280,13 +280,18 @@ const Launch = () => {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold">Startup Launches</h2>
-              <button 
-                onClick={() => setFilterDay(filterDay === "today" ? "yesterday" : "today")}
-                className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-              >
-                {filterDay === "today" ? "Today" : "Yesterday"}
-                <ChevronDown className="w-4 h-4" />
-              </button>
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={() => setFilterDay(filterDay === "today" ? "yesterday" : "today")}
+                  className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+                >
+                  {filterDay === "today" ? "Today" : "Yesterday"}
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+                <button className="p-2 hover:bg-muted rounded-md transition-colors">
+                  <Filter className="w-5 h-5 text-muted-foreground" />
+                </button>
+              </div>
             </div>
 
             <div className="space-y-4">
