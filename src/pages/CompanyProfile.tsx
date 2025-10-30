@@ -218,206 +218,234 @@ const CompanyProfile = () => {
     <div className="min-h-screen bg-background">
       <TopBar />
       
-      <main className="pt-14 pb-16">
+      <main className="pt-14 pb-20">
         <div className="max-w-2xl mx-auto">
-          {/* Profile Header */}
-          <div className="p-6 space-y-6">
-            {/* Avatar and Stats */}
-            <div className="flex items-start gap-6">
-              <Avatar className="h-24 w-24">
-                <AvatarImage src={company.logo} alt={company.name} />
-                <AvatarFallback>{company.name[0]}</AvatarFallback>
-              </Avatar>
-              
-              <div className="flex-1 space-y-3">
-                <div>
-                  <h1 className="text-2xl font-bold flex items-center gap-2">
-                    {company.name}
-                    {!company.isPublic && (
-                      <Lock className="h-5 w-5 text-muted-foreground" />
-                    )}
-                  </h1>
-                  <p className="text-sm text-muted-foreground">{company.tagline}</p>
-                </div>
+          {/* Profile Header with gradient background */}
+          <div className="relative bg-gradient-to-br from-primary/5 via-background to-background">
+            <div className="p-6 space-y-6">
+              {/* Avatar and Stats */}
+              <div className="flex items-start gap-4">
+                <Avatar className="h-28 w-28 ring-4 ring-background shadow-xl">
+                  <AvatarImage src={company.logo} alt={company.name} />
+                  <AvatarFallback className="text-2xl">{company.name[0]}</AvatarFallback>
+                </Avatar>
                 
-                {company.isPublic && (
-                  <div className="flex gap-6 text-sm">
-                    <div>
-                      <span className="font-bold">{company.followers.toLocaleString()}</span>
-                      <span className="text-muted-foreground ml-1">followers</span>
-                    </div>
-                    <div>
-                      <span className="font-bold">{company.following}</span>
-                      <span className="text-muted-foreground ml-1">following</span>
-                    </div>
+                <div className="flex-1 space-y-3 pt-1">
+                  <div>
+                    <h1 className="text-2xl font-bold flex items-center gap-2">
+                      {company.name}
+                      {!company.isPublic && (
+                        <Lock className="h-5 w-5 text-muted-foreground" />
+                      )}
+                    </h1>
+                    <p className="text-sm text-muted-foreground mt-1">{company.tagline}</p>
                   </div>
-                )}
+                  
+                  {company.isPublic && (
+                    <div className="flex gap-8 text-sm">
+                      <button className="hover:opacity-70 transition-opacity">
+                        <div className="font-bold text-base">{company.followers.toLocaleString()}</div>
+                        <div className="text-muted-foreground">followers</div>
+                      </button>
+                      <button className="hover:opacity-70 transition-opacity">
+                        <div className="font-bold text-base">{company.following}</div>
+                        <div className="text-muted-foreground">following</div>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-3">
+                <Button className="flex-1 h-11 font-semibold shadow-md hover:shadow-lg transition-shadow" variant="default">
+                  Follow
+                </Button>
+                <Button variant="outline" className="flex-1 h-11 font-semibold">
+                  <Send className="h-4 w-4 mr-2" />
+                  Message
+                </Button>
+              </div>
+
+              {/* Company Description */}
+              <div className="space-y-3 text-sm">
+                <p className="text-foreground leading-relaxed">{company.description}</p>
               </div>
             </div>
+          </div>
 
-            {/* Action Buttons */}
-            <div className="flex gap-2">
-              <Button className="flex-1" variant="default">
-                Follow
-              </Button>
-              <Button variant="outline" className="flex-1">
-                Message
-              </Button>
-            </div>
-
-            {/* Company Info */}
-            <div className="space-y-2 text-sm">
-              <p className="text-foreground">{company.description}</p>
-              
-              <div className="flex flex-wrap gap-x-4 gap-y-1 text-muted-foreground">
-                <div className="flex items-center gap-1">
-                  <Building2 className="h-4 w-4" />
-                  <span>{company.industry}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <MapPin className="h-4 w-4" />
-                  <span>{company.location}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Calendar className="h-4 w-4" />
-                  <span>Founded {company.founded}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Users className="h-4 w-4" />
-                  <span>{company.teamSize} employees</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Globe className="h-4 w-4" />
-                  <span>{company.website}</span>
-                </div>
+          {/* Company Details */}
+          <div className="px-6 py-4 bg-card/50">
+            <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Building2 className="h-4 w-4 text-primary" />
+                <span>{company.industry}</span>
+              </div>
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <MapPin className="h-4 w-4 text-primary" />
+                <span>{company.location}</span>
+              </div>
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Calendar className="h-4 w-4 text-primary" />
+                <span>Founded {company.founded}</span>
+              </div>
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Users className="h-4 w-4 text-primary" />
+                <span>{company.teamSize} employees</span>
+              </div>
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Globe className="h-4 w-4 text-primary" />
+                <a href={`https://${company.website}`} className="hover:text-primary transition-colors">{company.website}</a>
               </div>
             </div>
           </div>
 
           {/* Divider */}
-          <div className="h-px bg-border" />
+          <div className="h-[1px] bg-gradient-to-r from-transparent via-border to-transparent my-2" />
 
           {/* Financial Details */}
-          <Card className="m-4 p-4 space-y-4">
-            <h2 className="text-lg font-semibold flex items-center gap-2">
-              <TrendingUp className="h-5 w-5" />
-              Financial Overview
-            </h2>
-            
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <p className="text-muted-foreground">Pre-Valuation</p>
-                <p className="text-lg font-bold">{company.preValuation}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground">Post-Valuation</p>
-                <p className="text-lg font-bold">{company.postValuation}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground">Funds Raised</p>
-                <p className="text-lg font-bold">{company.fundsRaised}</p>
-              </div>
-              {company.fundingGoal && (
-                <div>
-                  <p className="text-muted-foreground">Funding Goal</p>
-                  <p className="text-lg font-bold">{company.fundingGoal}</p>
+          <div className="m-6">
+            <Card className="border-primary/20 shadow-lg overflow-hidden">
+              <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-6 space-y-5">
+                <h2 className="text-xl font-bold flex items-center gap-2">
+                  <div className="p-2 bg-primary/10 rounded-lg">
+                    <TrendingUp className="h-5 w-5 text-primary" />
+                  </div>
+                  Financial Overview
+                </h2>
+                
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">Pre-Valuation</p>
+                    <p className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">{company.preValuation}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">Post-Valuation</p>
+                    <p className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">{company.postValuation}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">Funds Raised</p>
+                    <p className="text-2xl font-bold">{company.fundsRaised}</p>
+                  </div>
+                  {company.fundingGoal && (
+                    <div className="space-y-1">
+                      <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">Funding Goal</p>
+                      <p className="text-2xl font-bold">{company.fundingGoal}</p>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
 
-            <div>
-              <p className="text-sm text-muted-foreground mb-2">Current Investors</p>
-              <div className="flex flex-wrap gap-2">
-                {company.currentInvestors.map((investor: string) => (
-                  <Badge key={investor} variant="secondary">
-                    {investor}
-                  </Badge>
-                ))}
+                <div className="pt-3 border-t border-border/50">
+                  <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium mb-3">Current Investors</p>
+                  <div className="flex flex-wrap gap-2">
+                    {company.currentInvestors.map((investor: string) => (
+                      <Badge key={investor} variant="secondary" className="px-3 py-1 text-xs font-medium shadow-sm">
+                        {investor}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
               </div>
-            </div>
-          </Card>
+            </Card>
+          </div>
 
           {/* Pitch Deck Access */}
-          <Card className="m-4 p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <FileText className="h-5 w-5 text-muted-foreground" />
-                <div>
-                  <p className="font-semibold">Pitch Deck</p>
-                  <p className="text-xs text-muted-foreground">
-                    {company.pitchDeckPublic ? "Public" : "Private - Invitation required"}
-                  </p>
+          <div className="mx-6 mb-6">
+            <Card className="border-primary/10 shadow-md hover:shadow-lg transition-shadow">
+              <div className="p-5 flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-primary/10 rounded-xl">
+                    <FileText className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-base">Pitch Deck</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {company.pitchDeckPublic ? "Public" : "Private - Invitation required"}
+                    </p>
+                  </div>
                 </div>
+                {company.pitchDeckPublic ? (
+                  <Button variant="outline" size="sm" className="font-semibold">
+                    View Deck
+                  </Button>
+                ) : (
+                  <Button
+                    variant={invitationSent ? "secondary" : "default"}
+                    size="sm"
+                    onClick={() => setInvitationSent(true)}
+                    disabled={invitationSent}
+                    className="font-semibold"
+                  >
+                    <Send className="h-4 w-4 mr-2" />
+                    {invitationSent ? "Sent" : "Request"}
+                  </Button>
+                )}
               </div>
-              {company.pitchDeckPublic ? (
-                <Button variant="outline" size="sm">
-                  View Deck
-                </Button>
-              ) : (
-                <Button
-                  variant={invitationSent ? "secondary" : "outline"}
-                  size="sm"
-                  onClick={() => setInvitationSent(true)}
-                  disabled={invitationSent}
-                >
-                  <Send className="h-4 w-4 mr-2" />
-                  {invitationSent ? "Sent" : "Request Access"}
-                </Button>
-              )}
-            </div>
-          </Card>
+            </Card>
+          </div>
 
           {/* Divider */}
-          <div className="h-px bg-border mx-4" />
+          <div className="h-[1px] bg-gradient-to-r from-transparent via-border to-transparent mb-2" />
 
           {/* Content Tabs */}
           <Tabs defaultValue="photos" className="w-full">
-            <TabsList className="w-full grid grid-cols-3 mx-4" style={{ width: "calc(100% - 2rem)" }}>
-              <TabsTrigger value="photos">Photos</TabsTrigger>
-              <TabsTrigger value="videos">Videos</TabsTrigger>
-              <TabsTrigger value="reels">Reels</TabsTrigger>
-            </TabsList>
+            <div className="sticky top-14 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 z-10 border-b">
+              <TabsList className="w-full h-14 grid grid-cols-3 rounded-none bg-transparent">
+                <TabsTrigger value="photos" className="text-base font-semibold data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none">
+                  Photos
+                </TabsTrigger>
+                <TabsTrigger value="videos" className="text-base font-semibold data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none">
+                  Videos
+                </TabsTrigger>
+                <TabsTrigger value="reels" className="text-base font-semibold data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none">
+                  Reels
+                </TabsTrigger>
+              </TabsList>
+            </div>
 
-            <TabsContent value="photos" className="px-4 mt-4">
-              <div className="grid grid-cols-3 gap-1">
+            <TabsContent value="photos" className="px-0.5 mt-0.5">
+              <div className="grid grid-cols-3 gap-0.5">
                 {company.photos.map((photo: string, index: number) => (
-                  <div key={index} className="aspect-square">
+                  <button 
+                    key={index} 
+                    className="aspect-square overflow-hidden bg-muted hover:opacity-90 transition-opacity"
+                  >
                     <img
                       src={photo}
                       alt={`${company.name} photo ${index + 1}`}
-                      className="w-full h-full object-cover rounded-sm"
+                      className="w-full h-full object-cover"
                     />
-                  </div>
+                  </button>
                 ))}
               </div>
               {company.photos.length === 0 && (
-                <div className="text-center py-12 text-muted-foreground">
+                <div className="text-center py-16 text-muted-foreground">
                   No photos available
                 </div>
               )}
             </TabsContent>
 
-            <TabsContent value="videos" className="px-4 mt-4">
-              <div className="grid grid-cols-3 gap-1">
+            <TabsContent value="videos" className="px-0.5 mt-0.5">
+              <div className="grid grid-cols-3 gap-0.5">
                 {company.videos.map((video: string, index: number) => (
-                  <div key={index} className="aspect-square bg-muted rounded-sm" />
+                  <button key={index} className="aspect-square bg-muted rounded-sm hover:opacity-90 transition-opacity" />
                 ))}
               </div>
               {company.videos.length === 0 && (
-                <div className="text-center py-12 text-muted-foreground">
+                <div className="text-center py-16 text-muted-foreground">
                   No videos available
                 </div>
               )}
             </TabsContent>
 
-            <TabsContent value="reels" className="px-4 mt-4">
-              <div className="grid grid-cols-3 gap-1">
+            <TabsContent value="reels" className="px-0.5 mt-0.5">
+              <div className="grid grid-cols-3 gap-0.5">
                 {company.reels.map((reel: string, index: number) => (
-                  <div key={index} className="aspect-[9/16] bg-muted rounded-sm" />
+                  <button key={index} className="aspect-[9/16] bg-muted rounded-sm hover:opacity-90 transition-opacity" />
                 ))}
               </div>
               {company.reels.length === 0 && (
-                <div className="text-center py-12 text-muted-foreground">
+                <div className="text-center py-16 text-muted-foreground">
                   No reels available
                 </div>
               )}
