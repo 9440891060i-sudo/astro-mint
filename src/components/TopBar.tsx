@@ -1,21 +1,34 @@
-import { User, Search, MessageCircle } from "lucide-react";
+import { User, Search, MessageCircle, ChevronLeft } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const TopBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isMessagesPage = location.pathname === '/messages';
+  const isCompanyProfile = location.pathname.startsWith('/company/');
+  const fromPath = location.state?.from;
 
   return (
     <header className="fixed top-0 left-0 right-0 bg-background border-b border-border z-50">
       <div className="max-w-2xl mx-auto flex items-center justify-between px-4 h-14">
-        {/* Profile Icon */}
-        <button 
-          onClick={() => navigate('/profile')}
-          className="w-8 h-8 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80"
-        >
-          <User className="w-5 h-5 text-foreground" strokeWidth={1.5} />
-        </button>
+        {/* Left side - Profile Icon or Back Button */}
+        <div className="flex items-center gap-3">
+          {isCompanyProfile && fromPath ? (
+            <button 
+              onClick={() => navigate(fromPath)}
+              className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-muted/80"
+            >
+              <ChevronLeft className="w-5 h-5 text-foreground" strokeWidth={1.5} />
+            </button>
+          ) : (
+            <button 
+              onClick={() => navigate('/profile')}
+              className="w-8 h-8 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80"
+            >
+              <User className="w-5 h-5 text-foreground" strokeWidth={1.5} />
+            </button>
+          )}
+        </div>
 
         {/* Right Icons */}
         <div className="flex items-center gap-4">

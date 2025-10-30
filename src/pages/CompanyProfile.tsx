@@ -220,24 +220,7 @@ const CompanyProfile = () => {
     <div className="min-h-screen bg-background">
       <TopBar />
       
-      {/* Back Button - only show if navigated from a post */}
-      {fromPath && (
-        <div className="fixed top-14 left-0 right-0 z-40 bg-background border-b">
-          <div className="max-w-2xl mx-auto px-4 py-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate(fromPath)}
-              className="flex items-center gap-1 text-sm"
-            >
-              <ChevronLeft className="h-4 w-4" />
-              Back to feed
-            </Button>
-          </div>
-        </div>
-      )}
-      
-      <main className={`pb-20 ${fromPath ? 'pt-[104px]' : 'pt-14'}`}>
+      <main className="pt-14 pb-20">
         <div className="max-w-2xl mx-auto">
           {/* Profile Header with gradient background */}
           <div className="relative bg-gradient-to-br from-primary/5 via-background to-background">

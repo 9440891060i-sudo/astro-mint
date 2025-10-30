@@ -47,7 +47,7 @@ const StartupPost = ({ company }: StartupPostProps) => {
     <Card className="mb-4 overflow-hidden border-border">
       {/* Header - Clickable */}
       <div 
-        className="flex items-center gap-3 p-4 cursor-pointer hover:bg-accent/5 transition-colors"
+        className="flex items-center gap-3 p-4 cursor-pointer"
         onClick={() => navigate(`/company/${company.id}`, { state: { from: '/' } })}
       >
         <Avatar className="h-10 w-10">
@@ -62,7 +62,7 @@ const StartupPost = ({ company }: StartupPostProps) => {
 
       {/* Company Details - Clickable */}
       <div 
-        className="px-4 pb-3 space-y-2 cursor-pointer hover:bg-accent/5 transition-colors"
+        className="px-4 pb-3 space-y-2 cursor-pointer"
         onClick={() => navigate(`/company/${company.id}`, { state: { from: '/' } })}
       >
         <p className="text-sm font-medium">{company.tagline}</p>
