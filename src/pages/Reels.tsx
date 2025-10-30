@@ -110,7 +110,7 @@ const Reels = () => {
   };
 
   const handleProfileClick = (companyId: string) => {
-    navigate(`/company/${companyId}`);
+    navigate(`/company/${companyId}`, { state: { from: '/reels' } });
   };
 
   const formatNumber = (num: number) => {

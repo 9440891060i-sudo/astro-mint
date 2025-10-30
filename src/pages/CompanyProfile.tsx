@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import TopBar from "@/components/TopBar";
 import BottomNav from "@/components/BottomNav";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Lock, Send, FileText, Users, Building2, TrendingUp, Calendar, MapPin, Globe } from "lucide-react";
+import { Lock, Send, FileText, Users, Building2, TrendingUp, Calendar, MapPin, Globe, ChevronLeft } from "lucide-react";
 
 // Mock data - in real app this would come from API/database
 const companyData: Record<string, any> = {
@@ -195,9 +195,11 @@ const companyData: Record<string, any> = {
 const CompanyProfile = () => {
   const { companyId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [invitationSent, setInvitationSent] = useState(false);
   
   const company = companyId ? companyData[companyId] : null;
+  const fromPath = location.state?.from || null;
 
   if (!company) {
     return (
@@ -218,7 +220,24 @@ const CompanyProfile = () => {
     <div className="min-h-screen bg-background">
       <TopBar />
       
-      <main className="pt-14 pb-20">
+      {/* Back Button - only show if navigated from a post */}
+      {fromPath && (
+        <div className="fixed top-14 left-0 right-0 z-40 bg-background border-b">
+          <div className="max-w-2xl mx-auto px-4 py-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate(fromPath)}
+              className="flex items-center gap-1 text-sm"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Back to feed
+            </Button>
+          </div>
+        </div>
+      )}
+      
+      <main className={`pb-20 ${fromPath ? 'pt-[104px]' : 'pt-14'}`}>
         <div className="max-w-2xl mx-auto">
           {/* Profile Header with gradient background */}
           <div className="relative bg-gradient-to-br from-primary/5 via-background to-background">

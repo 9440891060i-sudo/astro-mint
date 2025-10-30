@@ -8,6 +8,10 @@ const BottomNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Check if we're on a company profile that was navigated from home or reels
+  const fromPath = location.state?.from;
+  const isCompanyProfile = location.pathname.startsWith('/company/');
+  
   const tabs = [
     { id: "home" as TabType, icon: Home, label: "Home", path: "/" },
     { id: "launch" as TabType, icon: Rocket, label: "Launch", path: "/launch" },
@@ -25,7 +29,10 @@ const BottomNav = () => {
       <div className="max-w-2xl mx-auto flex items-center justify-around h-16">
         {tabs.map((tab) => {
           const Icon = tab.icon;
-          const isActive = location.pathname === tab.path;
+          // Keep the original tab active if we're on company profile from that tab
+          const isActive = isCompanyProfile && fromPath
+            ? tab.path === fromPath
+            : location.pathname === tab.path;
           const isMainAction = tab.id === "trade";
 
           return (

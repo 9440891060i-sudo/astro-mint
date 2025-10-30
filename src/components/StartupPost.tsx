@@ -45,10 +45,10 @@ const StartupPost = ({ company }: StartupPostProps) => {
 
   return (
     <Card className="mb-4 overflow-hidden border-border">
-      {/* Header */}
+      {/* Header - Clickable */}
       <div 
         className="flex items-center gap-3 p-4 cursor-pointer hover:bg-accent/5 transition-colors"
-        onClick={() => navigate(`/company/${company.id}`)}
+        onClick={() => navigate(`/company/${company.id}`, { state: { from: '/' } })}
       >
         <Avatar className="h-10 w-10">
           <AvatarImage src={company.logo} alt={company.name} />
@@ -60,8 +60,11 @@ const StartupPost = ({ company }: StartupPostProps) => {
         </div>
       </div>
 
-      {/* Company Details */}
-      <div className="px-4 pb-3 space-y-2">
+      {/* Company Details - Clickable */}
+      <div 
+        className="px-4 pb-3 space-y-2 cursor-pointer hover:bg-accent/5 transition-colors"
+        onClick={() => navigate(`/company/${company.id}`, { state: { from: '/' } })}
+      >
         <p className="text-sm font-medium">{company.tagline}</p>
         
         <div className="grid grid-cols-2 gap-2 text-xs">
@@ -98,7 +101,7 @@ const StartupPost = ({ company }: StartupPostProps) => {
         )}
       </div>
 
-      {/* Image Carousel */}
+      {/* Image Carousel - NOT clickable for profile navigation */}
       <div className="relative bg-muted">
         <img
           src={company.images[currentImageIndex]}
@@ -112,7 +115,10 @@ const StartupPost = ({ company }: StartupPostProps) => {
             {company.images.map((_, index) => (
               <button
                 key={index}
-                onClick={() => setCurrentImageIndex(index)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCurrentImageIndex(index);
+                }}
                 className={`h-1.5 rounded-full transition-all ${
                   index === currentImageIndex
                     ? "w-6 bg-white"
@@ -124,14 +130,17 @@ const StartupPost = ({ company }: StartupPostProps) => {
         )}
       </div>
 
-      {/* Action Buttons */}
+      {/* Action Buttons - NOT clickable for profile navigation */}
       <div className="p-4 space-y-3">
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"
             size="sm"
             className="h-auto p-0 hover:bg-transparent"
-            onClick={handleLike}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleLike();
+            }}
           >
             <Heart
               className={`h-6 w-6 ${
@@ -144,7 +153,10 @@ const StartupPost = ({ company }: StartupPostProps) => {
             variant="ghost"
             size="sm"
             className="h-auto p-0 hover:bg-transparent"
-            onClick={handleCrown}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleCrown();
+            }}
           >
             <Crown
               className={`h-6 w-6 ${
@@ -157,6 +169,7 @@ const StartupPost = ({ company }: StartupPostProps) => {
             variant="ghost"
             size="sm"
             className="h-auto p-0 hover:bg-transparent"
+            onClick={(e) => e.stopPropagation()}
           >
             <MessageCircle className="h-6 w-6" />
           </Button>
@@ -167,7 +180,10 @@ const StartupPost = ({ company }: StartupPostProps) => {
             variant="ghost"
             size="sm"
             className="h-auto p-0 hover:bg-transparent"
-            onClick={() => setSaved(!saved)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setSaved(!saved);
+            }}
           >
             <Bookmark
               className={`h-6 w-6 ${
@@ -180,6 +196,7 @@ const StartupPost = ({ company }: StartupPostProps) => {
             variant="ghost"
             size="sm"
             className="h-auto p-0 hover:bg-transparent"
+            onClick={(e) => e.stopPropagation()}
           >
             <Share2 className="h-6 w-6" />
           </Button>
