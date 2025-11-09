@@ -1,4 +1,4 @@
-import { User, Search, MessageCircle, ChevronLeft, Briefcase } from "lucide-react";
+import { Search, MessageCircle, ChevronLeft, Briefcase } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import GrantsSheet from "./GrantsSheet";
@@ -35,32 +35,16 @@ const TopBar = () => {
   return (
     <header className={`fixed top-0 left-0 right-0 bg-background/80 backdrop-blur-lg border-b border-border/50 z-50 shadow-sm transition-transform duration-300 ${isVisible ? 'translate-y-0' : '-translate-y-full'}`}>
       <div className="max-w-2xl mx-auto flex items-center justify-between px-4 h-14">
-        {/* Left side - Profile Icon or Back Button */}
+        {/* Left side - Back Button */}
         <div className="flex items-center gap-3">
-          {isCompanyProfile && fromPath ? (
+          {isCompanyProfile && fromPath && (
             <button 
               onClick={() => navigate(fromPath)}
               className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-muted/80 transition-all duration-300 active:scale-95"
             >
               <ChevronLeft className="w-5 h-5 text-foreground" strokeWidth={2} />
             </button>
-          ) : (
-            <button 
-              onClick={() => navigate('/profile')}
-              className="w-9 h-9 rounded-full bg-gradient-to-br from-muted to-muted-hover flex items-center justify-center hover:shadow-md transition-all duration-300 active:scale-95"
-            >
-              <User className="w-5 h-5 text-foreground" strokeWidth={2} />
-            </button>
           )}
-          
-          {/* Grants Button */}
-          <button 
-            onClick={() => setGrantsOpen(true)}
-            className="flex items-center gap-1.5 px-3.5 py-2 bg-gradient-primary text-white rounded-full hover:shadow-primary transition-all duration-300 hover:scale-105 active:scale-95"
-          >
-            <Briefcase className="w-4 h-4" strokeWidth={2} />
-            <span className="text-xs font-semibold">Opportunities</span>
-          </button>
         </div>
 
         {/* Right Icons */}
@@ -85,6 +69,14 @@ const TopBar = () => {
             <span className="absolute top-1 right-1 min-w-[18px] h-[18px] px-1 bg-gradient-to-br from-destructive to-warning rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-md animate-pulse-glow">
               3
             </span>
+          </button>
+
+          {/* Grants Button */}
+          <button 
+            onClick={() => setGrantsOpen(true)}
+            className="p-2 rounded-lg bg-gradient-primary text-white hover:shadow-primary transition-all duration-300 hover:scale-105 active:scale-95"
+          >
+            <Briefcase className="w-5 h-5" strokeWidth={2} />
           </button>
         </div>
       </div>
