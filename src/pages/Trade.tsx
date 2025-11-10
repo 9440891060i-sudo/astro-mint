@@ -28,8 +28,10 @@ interface ScanAd {
   id: number;
   name: string;
   avatar: string;
+  type: 'Investor' | 'Startup';
   companyName: string;
   companyTagline: string;
+  companyAge: string;
   revenue: string;
   fundsRaised: string;
   preMoneyValuation: string;
@@ -54,8 +56,10 @@ const scanAds: ScanAd[] = [
     id: 1, 
     name: "Rajesh Mukarji", 
     avatar: "https://i.pravatar.cc/150?img=12",
+    type: "Investor",
     companyName: "Airbound Pvt Ltd",
     companyTagline: "Revolutionizing logistics with AI-powered drone delivery solutions",
+    companyAge: "2 years",
     revenue: "Revenue Generating",
     fundsRaised: "₹25,00,000",
     preMoneyValuation: "₹35,00,000",
@@ -68,8 +72,10 @@ const scanAds: ScanAd[] = [
     id: 2, 
     name: "Joshua Paul", 
     avatar: "https://i.pravatar.cc/150?img=33",
+    type: "Investor",
     companyName: "Zlyft Autonomy Pvt Ltd",
     companyTagline: "Building next-gen autonomous vehicles for urban transportation",
+    companyAge: "1.5 years",
     revenue: "Pre Revenue",
     fundsRaised: "₹15,00,000",
     preMoneyValuation: "₹80,00,000",
@@ -81,8 +87,10 @@ const scanAds: ScanAd[] = [
     id: 3, 
     name: "Priya Sharma", 
     avatar: "https://i.pravatar.cc/150?img=47",
+    type: "Startup",
     companyName: "TechFlow Solutions",
     companyTagline: "Streamlining enterprise workflows with intelligent automation",
+    companyAge: "3 years",
     revenue: "Revenue Generating",
     fundsRaised: "₹40,00,000",
     preMoneyValuation: "₹60,00,000",
@@ -94,8 +102,10 @@ const scanAds: ScanAd[] = [
     id: 4, 
     name: "Alex Chen", 
     avatar: "https://i.pravatar.cc/150?img=68",
+    type: "Investor",
     companyName: "CloudSync Systems",
     companyTagline: "Seamless multi-cloud data synchronization and management platform",
+    companyAge: "1 year",
     revenue: "Pre Revenue",
     fundsRaised: "₹10,00,000",
     preMoneyValuation: "₹45,00,000",
@@ -108,8 +118,10 @@ const scanAds: ScanAd[] = [
     id: 5, 
     name: "Sarah Williams", 
     avatar: "https://i.pravatar.cc/150?img=25",
+    type: "Startup",
     companyName: "GreenTech Innovations",
     companyTagline: "Sustainable energy solutions for a carbon-neutral future",
+    companyAge: "4 years",
     revenue: "Revenue Generating",
     fundsRaised: "₹32,00,000",
     preMoneyValuation: "₹55,00,000",
@@ -121,8 +133,10 @@ const scanAds: ScanAd[] = [
     id: 6, 
     name: "Michael Rodriguez", 
     avatar: "https://i.pravatar.cc/150?img=52",
+    type: "Investor",
     companyName: "FinNext Solutions",
     companyTagline: "Digital banking infrastructure for the next generation",
+    companyAge: "2.5 years",
     revenue: "Pre Revenue",
     fundsRaised: "₹50,00,000",
     preMoneyValuation: "₹70,00,000",
@@ -134,8 +148,10 @@ const scanAds: ScanAd[] = [
     id: 7, 
     name: "Aisha Patel", 
     avatar: "https://i.pravatar.cc/150?img=38",
+    type: "Startup",
     companyName: "EduTech Pro",
     companyTagline: "Personalized learning experiences powered by AI",
+    companyAge: "3 years",
     revenue: "Revenue Generating",
     fundsRaised: "₹18,00,000",
     preMoneyValuation: "₹42,00,000",
@@ -147,8 +163,10 @@ const scanAds: ScanAd[] = [
     id: 8, 
     name: "David Kim", 
     avatar: "https://i.pravatar.cc/150?img=61",
+    type: "Investor",
     companyName: "HealthSync AI",
     companyTagline: "AI-driven healthcare coordination and patient management",
+    companyAge: "2 years",
     revenue: "Revenue Generating",
     fundsRaised: "₹60,00,000",
     preMoneyValuation: "₹95,00,000",
@@ -160,8 +178,10 @@ const scanAds: ScanAd[] = [
     id: 9, 
     name: "Emma Thompson", 
     avatar: "https://i.pravatar.cc/150?img=29",
+    type: "Startup",
     companyName: "LogiChain Systems",
     companyTagline: "Blockchain-based supply chain transparency solutions",
+    companyAge: "1 year",
     revenue: "Pre Revenue",
     fundsRaised: "₹22,00,000",
     preMoneyValuation: "₹52,00,000",
@@ -173,8 +193,10 @@ const scanAds: ScanAd[] = [
     id: 10, 
     name: "Arjun Mehta", 
     avatar: "https://i.pravatar.cc/150?img=15",
+    type: "Investor",
     companyName: "FoodTech Ventures",
     companyTagline: "Farm-to-table technology for sustainable food systems",
+    companyAge: "5 years",
     revenue: "Revenue Generating",
     fundsRaised: "₹28,00,000",
     preMoneyValuation: "₹48,00,000",
@@ -443,13 +465,21 @@ const Trade = () => {
 
                     {/* Details */}
                     <div className="flex-1 min-w-0">
-                      {/* Name - Clickable */}
-                      <button 
-                        onClick={() => navigate('/profile')}
-                        className="font-semibold text-foreground hover:text-primary transition-colors text-left"
-                      >
-                        {ad.name}
-                      </button>
+                      {/* Name with Type Badge - Clickable */}
+                      <div className="flex items-center gap-2">
+                        <button 
+                          onClick={() => navigate('/profile')}
+                          className="font-semibold text-foreground hover:text-primary transition-colors text-left"
+                        >
+                          {ad.name}
+                        </button>
+                        <Badge 
+                          variant="secondary" 
+                          className="text-[10px] px-1.5 py-0 h-4 font-medium"
+                        >
+                          {ad.type}
+                        </Badge>
+                      </div>
 
                       {/* Company Name with Info Icon - Clickable */}
                       <div className="flex items-center gap-1.5 mt-0.5">
@@ -474,7 +504,7 @@ const Trade = () => {
                         </div>
                       )}
 
-                      {/* Revenue and Funds Raised */}
+                      {/* Revenue, Funds Raised, and Age */}
                       <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs">
                         <div>
                           <span className="text-muted-foreground">Revenue: </span>
@@ -483,6 +513,10 @@ const Trade = () => {
                         <div>
                           <span className="text-muted-foreground">Funds: </span>
                           <span className="font-medium text-foreground">{ad.fundsRaised}</span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Age: </span>
+                          <span className="font-medium text-foreground">{ad.companyAge}</span>
                         </div>
                       </div>
 
