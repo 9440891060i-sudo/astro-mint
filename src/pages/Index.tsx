@@ -1,11 +1,13 @@
 import TopBar from "@/components/TopBar";
 import BottomNav from "@/components/BottomNav";
 import StartupPost from "@/components/StartupPost";
+import Stories from "@/components/Stories";
 
 const mockStartups = [
   {
     id: "airbound-co",
     name: "Airbound.co",
+    tagline: "Revolutionary aerospace delivery platform",
     logo: "https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=100&h=100&fit=crop",
     revenueGenerating: true,
     fundsRaised: "$2M",
@@ -21,6 +23,7 @@ const mockStartups = [
   {
     id: "skyt-air",
     name: "Skyt Air",
+    tagline: "Next-gen aviation technology solutions",
     logo: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=100&h=100&fit=crop",
     revenueGenerating: true,
     fundsRaised: "$4M",
@@ -35,6 +38,7 @@ const mockStartups = [
   {
     id: "neuralhealth",
     name: "NeuralHealth",
+    tagline: "AI-powered healthcare diagnostics",
     logo: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=100&h=100&fit=crop",
     revenueGenerating: false,
     fundsRaised: "$8M",
@@ -50,6 +54,7 @@ const mockStartups = [
   {
     id: "greencharge",
     name: "GreenCharge",
+    tagline: "Sustainable EV charging infrastructure",
     logo: "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=100&h=100&fit=crop",
     revenueGenerating: true,
     fundsRaised: "$5M",
@@ -63,6 +68,7 @@ const mockStartups = [
   {
     id: "foodflow",
     name: "FoodFlow",
+    tagline: "Farm-to-table supply chain optimization",
     logo: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=100&h=100&fit=crop",
     revenueGenerating: true,
     fundsRaised: "$3.5M",
@@ -78,6 +84,7 @@ const mockStartups = [
   {
     id: "codementor-ai",
     name: "CodeMentor AI",
+    tagline: "AI-powered coding education platform",
     logo: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=100&h=100&fit=crop",
     revenueGenerating: false,
     fundsRaised: "$6M",
@@ -92,6 +99,7 @@ const mockStartups = [
   {
     id: "urbanfarm",
     name: "UrbanFarm",
+    tagline: "Vertical farming for urban environments",
     logo: "https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=100&h=100&fit=crop",
     revenueGenerating: true,
     fundsRaised: "$4.5M",
@@ -115,10 +123,12 @@ const Index = () => {
       {/* Main Feed Area */}
       <main className="pt-14 pb-16">
         <div className="max-w-2xl mx-auto px-4 py-6 overflow-y-auto space-y-6">
-          {/* Welcome Header with Gradient */}
-          <div className="bg-gradient-card rounded-xl p-6 border border-border/50 shadow-lg">
-            <h1 className="text-2xl font-bold text-gradient mb-2">Discover Startups</h1>
-            <p className="text-muted-foreground">Connect with innovative companies and investment opportunities</p>
+          {/* Stories Section */}
+          <Stories />
+
+          {/* Suggested For You Header */}
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-foreground">Suggested for you</h2>
           </div>
 
           {/* Startup Posts */}

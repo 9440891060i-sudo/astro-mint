@@ -9,6 +9,7 @@ interface StartupPostProps {
   company: {
     id: string;
     name: string;
+    tagline: string;
     logo: string;
     revenueGenerating: boolean;
     fundsRaised: string;
@@ -40,14 +41,14 @@ const StartupPost = ({ company }: StartupPostProps) => {
   };
 
   return (
-    <Card className="overflow-hidden border-border/50 bg-card shadow-sm">
+    <Card className="overflow-hidden border-border bg-card shadow-lg">
       {/* Header - Clickable */}
       <div 
-        className="flex items-center justify-between p-4 cursor-pointer hover:bg-muted/30 transition-colors"
+        className="flex items-center justify-between p-4 cursor-pointer hover:bg-card-hover transition-colors"
         onClick={() => navigate(`/company/${company.id}`, { state: { from: '/' } })}
       >
         <div className="flex items-center gap-3">
-          <Avatar className="h-12 w-12 border-2 border-border/50">
+          <Avatar className="h-11 w-11 border-2 border-border">
             <AvatarImage src={company.logo} alt={company.name} />
             <AvatarFallback className="bg-muted text-foreground">{company.name[0]}</AvatarFallback>
           </Avatar>
@@ -56,116 +57,87 @@ const StartupPost = ({ company }: StartupPostProps) => {
               <h3 className="font-semibold text-base">{company.name}</h3>
               <ShieldCheck className="w-4 h-4 text-primary flex-shrink-0" />
             </div>
-            <div className="flex items-center gap-2 mt-0.5">
-              <span className={`text-xs px-2 py-0.5 rounded-full ${
-                company.revenueGenerating 
-                  ? 'bg-success/10 text-success' 
-                  : 'bg-muted text-muted-foreground'
-              }`}>
-                {company.revenueGenerating ? 'Revenue Generating' : 'Pre-Revenue'}
-              </span>
+            <p className="text-xs text-muted-foreground mt-0.5">{company.tagline}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Image Carousel with Rounded Edges */}
+      <div className="px-3 pb-3">
+        <div className="relative bg-muted rounded-xl overflow-hidden">
+          <img
+            src={company.images[currentImageIndex]}
+            alt={`${company.name} ${currentImageIndex + 1}`}
+            className="w-full aspect-[4/3] object-cover"
+          />
+          
+          {/* Image Indicators */}
+          {company.images.length > 1 && (
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+              {company.images.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentImageIndex(index);
+                  }}
+                  className={`h-1.5 rounded-full transition-all ${
+                    index === currentImageIndex
+                      ? "w-6 bg-white"
+                      : "w-1.5 bg-white/50"
+                  }`}
+                />
+              ))}
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Image Carousel */}
-      <div className="relative bg-muted">
-        <img
-          src={company.images[currentImageIndex]}
-          alt={`${company.name} ${currentImageIndex + 1}`}
-          className="w-full aspect-[4/3] object-cover"
-        />
-        
-        {/* Seeking Investment Badge */}
-        {company.lookingToDilute && company.dilutionAmount && (
-          <div className="absolute top-3 right-3 bg-primary/90 backdrop-blur-sm text-primary-foreground px-3 py-1.5 rounded-full text-xs font-semibold shadow-lg">
-            Seeking: {company.dilutionAmount}
-          </div>
-        )}
-        
-        {/* Image Indicators */}
-        {company.images.length > 1 && (
-          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
-            {company.images.map((_, index) => (
-              <button
-                key={index}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setCurrentImageIndex(index);
-                }}
-                className={`h-1.5 rounded-full transition-all ${
-                  index === currentImageIndex
-                    ? "w-6 bg-white"
-                    : "w-1.5 bg-white/50"
-                }`}
-              />
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Company Info */}
-      <div className="p-4 space-y-3">
-        <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-1">
-            <span className="text-xs text-muted-foreground">Funds Raised</span>
-            <p className="font-semibold text-sm">{company.fundsRaised}</p>
-          </div>
-          <div className="space-y-1">
-            <span className="text-xs text-muted-foreground">Investors</span>
-            <p className="font-semibold text-sm">{company.currentInvestors.length}</p>
-          </div>
-        </div>
-
-        <div className="space-y-1">
-          <span className="text-xs text-muted-foreground">Current Investors</span>
-          <p className="text-sm">{company.currentInvestors.join(", ")}</p>
+          )}
         </div>
       </div>
 
       {/* Action Buttons */}
-      <div className="px-4 pb-4 pt-0">
-        <div className="flex items-center gap-4 pt-3 border-t border-border/50">
+      <div className="px-4 pb-3">
+        <div className="flex items-center gap-5">
           <Button
             variant="ghost"
             size="sm"
-            className="h-auto p-0 hover:bg-transparent group"
+            className="h-auto p-0 hover:bg-transparent group flex items-center gap-1.5"
             onClick={(e) => {
               e.stopPropagation();
               handleLike();
             }}
           >
             <Heart
-              className={`h-5 w-5 transition-colors ${
+              className={`h-6 w-6 transition-all ${
                 liked ? "fill-accent text-accent" : "text-foreground group-hover:text-accent"
               }`}
             />
+            <span className="text-sm font-medium">{likes}</span>
           </Button>
           
           <Button
             variant="ghost"
             size="sm"
-            className="h-auto p-0 hover:bg-transparent group"
+            className="h-auto p-0 hover:bg-transparent group flex items-center gap-1.5"
             onClick={(e) => {
               e.stopPropagation();
               handleCrown();
             }}
           >
             <Crown
-              className={`h-5 w-5 transition-colors ${
+              className={`h-6 w-6 transition-all ${
                 crowned ? "fill-primary text-primary" : "text-foreground group-hover:text-primary"
               }`}
             />
+            <span className="text-sm font-medium">{crowns}</span>
           </Button>
 
           <Button
             variant="ghost"
             size="sm"
-            className="h-auto p-0 hover:bg-transparent group"
+            className="h-auto p-0 hover:bg-transparent group flex items-center gap-1.5"
             onClick={(e) => e.stopPropagation()}
           >
-            <MessageCircle className="h-5 w-5 text-foreground group-hover:text-accent transition-colors" />
+            <MessageCircle className="h-6 w-6 text-foreground group-hover:text-accent transition-colors" />
+            <span className="text-sm font-medium">{comments}</span>
           </Button>
 
           <div className="flex-1" />
@@ -180,7 +152,7 @@ const StartupPost = ({ company }: StartupPostProps) => {
             }}
           >
             <Bookmark
-              className={`h-5 w-5 transition-colors ${
+              className={`h-6 w-6 transition-all ${
                 saved ? "fill-foreground" : "text-foreground group-hover:fill-muted-foreground"
               }`}
             />
@@ -192,15 +164,42 @@ const StartupPost = ({ company }: StartupPostProps) => {
             className="h-auto p-0 hover:bg-transparent group"
             onClick={(e) => e.stopPropagation()}
           >
-            <Share2 className="h-5 w-5 text-foreground group-hover:text-accent transition-colors" />
+            <Share2 className="h-6 w-6 text-foreground group-hover:text-accent transition-colors" />
           </Button>
         </div>
+      </div>
 
-        {/* Counts */}
-        <div className="flex items-center gap-4 text-xs text-muted-foreground mt-3">
-          <span>{likes} likes</span>
-          <span>{crowns} crowns</span>
-          <span>{comments} comments</span>
+      {/* Company Info - Bottom Section */}
+      <div className="px-4 pb-4 space-y-2.5 border-t border-border pt-3">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
+            company.revenueGenerating 
+              ? 'bg-success/10 text-success border border-success/20' 
+              : 'bg-muted text-muted-foreground border border-border'
+          }`}>
+            {company.revenueGenerating ? 'Revenue Generating' : 'Pre-Revenue'}
+          </span>
+          {company.lookingToDilute && company.dilutionAmount && (
+            <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-primary/10 text-primary border border-primary/20">
+              Seeking: {company.dilutionAmount}
+            </span>
+          )}
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <span className="text-xs text-muted-foreground">Funds Raised</span>
+            <p className="font-semibold text-sm mt-0.5">{company.fundsRaised}</p>
+          </div>
+          <div>
+            <span className="text-xs text-muted-foreground">Investors</span>
+            <p className="font-semibold text-sm mt-0.5">{company.currentInvestors.length}</p>
+          </div>
+        </div>
+
+        <div>
+          <span className="text-xs text-muted-foreground">Current Investors</span>
+          <p className="text-sm mt-0.5 text-foreground/90">{company.currentInvestors.join(", ")}</p>
         </div>
       </div>
     </Card>

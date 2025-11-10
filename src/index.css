@@ -9,13 +9,13 @@
 @layer base {
   :root {
     /* Premium Background System */
-    --background: 0 0% 8%;
-    --background-subtle: 0 0% 10%;
+    --background: 0 0% 0%;
+    --background-subtle: 0 0% 2%;
     --foreground: 0 0% 95%;
     
     /* Elevated Card System with depth */
-    --card: 0 0% 12%;
-    --card-hover: 0 0% 14%;
+    --card: 0 0% 5%;
+    --card-hover: 0 0% 7%;
     --card-foreground: 0 0% 95%;
     
     /* Sophisticated Primary - Greyish Black */
@@ -91,12 +91,12 @@
   }
   
   .dark {
-    --background: 0 0% 6%;
-    --background-subtle: 0 0% 8%;
+    --background: 0 0% 0%;
+    --background-subtle: 0 0% 2%;
     --foreground: 0 0% 95%;
     
-    --card: 0 0% 10%;
-    --card-hover: 0 0% 12%;
+    --card: 0 0% 5%;
+    --card-hover: 0 0% 7%;
     --card-foreground: 0 0% 95%;
     
     --primary: 0 0% 30%;
