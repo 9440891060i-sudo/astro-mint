@@ -10,6 +10,7 @@ interface StartupPostProps {
     id: string;
     name: string;
     tagline: string;
+    brief: string;
     logo: string;
     revenueGenerating: boolean;
     fundsRaised: string;
@@ -169,8 +170,15 @@ const StartupPost = ({ company }: StartupPostProps) => {
         </div>
       </div>
 
+      {/* Company Brief */}
+      <div className="px-4 pb-3">
+        <p className="text-sm text-foreground/80 leading-relaxed">
+          {company.brief}
+        </p>
+      </div>
+
       {/* Company Info - Bottom Section */}
-      <div className="px-4 pb-4 space-y-2.5 pt-3">
+      <div className="px-4 pb-4 space-y-2.5 pt-1">
         <div className="flex items-center gap-2 flex-wrap">
           <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
             company.revenueGenerating 
