@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Search as SearchIcon, X, Plus, Play } from "lucide-react";
+import { Search as SearchIcon, X, Plus, Play, ListFilter } from "lucide-react";
 import TopBar from "@/components/TopBar";
 import BottomNav from "@/components/BottomNav";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const categories = [
   "AI", "Manufacturing", "ML", "B2B", "SaaS", "Fintech", "HealthTech", 
@@ -235,43 +236,72 @@ const Search = () => {
       <TopBar />
       
       <main className="pt-14 px-4 max-w-2xl mx-auto">
-        {/* Search Bar */}
+        {/* Search Bar with Topics */}
         <div className="mt-6 mb-4">
-          <div className="relative">
-            <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-            <Input
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search investors, startups, founders…"
-              className="pl-10 pr-10 h-12 rounded-full bg-muted border-0"
-            />
-            {(searchQuery || selectedCategories.length > 0) && (
-              <button
-                onClick={clearSearch}
-                className="absolute right-3 top-1/2 -translate-y-1/2"
-              >
-                <X className="w-5 h-5 text-muted-foreground" />
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Category Tags */}
-        <div className="bg-muted rounded-xl p-4 mb-4 max-h-48 overflow-y-auto">
-          <div className="flex flex-wrap gap-2">
-            {categories.map((category) => {
-              const isSelected = selectedCategories.includes(category);
-              return (
-                <Badge
-                  key={category}
-                  variant={isSelected ? "default" : "outline"}
-                  onClick={() => toggleCategory(category)}
-                  className="cursor-pointer transition-all"
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1">
+              <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+              <Input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search investors, startups, founders…"
+                className="pl-10 pr-10 h-12 rounded-full bg-muted border-0"
+              />
+              {(searchQuery || selectedCategories.length > 0) && (
+                <button
+                  onClick={clearSearch}
+                  className="absolute right-3 top-1/2 -translate-y-1/2"
                 >
-                  {category}
-                </Badge>
-              );
-            })}
+                  <X className="w-5 h-5 text-muted-foreground" />
+                </button>
+              )}
+            </div>
+
+            {/* Topics Filter Popover */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="relative h-12 w-12 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80 transition-colors flex-shrink-0">
+                  <ListFilter className="w-5 h-5 text-foreground" />
+                  {selectedCategories.length > 0 && (
+                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary text-primary-foreground text-xs rounded-full flex items-center justify-center">
+                      {selectedCategories.length}
+                    </span>
+                  )}
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80 max-h-96 overflow-y-auto" align="end">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-semibold text-foreground">Topics</h3>
+                    {selectedCategories.length > 0 && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setSelectedCategories([])}
+                        className="h-auto p-0 text-xs text-muted-foreground hover:text-foreground"
+                      >
+                        Clear all
+                      </Button>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {categories.map((category) => {
+                      const isSelected = selectedCategories.includes(category);
+                      return (
+                        <Badge
+                          key={category}
+                          variant={isSelected ? "default" : "outline"}
+                          onClick={() => toggleCategory(category)}
+                          className="cursor-pointer transition-all"
+                        >
+                          {category}
+                        </Badge>
+                      );
+                    })}
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
 
