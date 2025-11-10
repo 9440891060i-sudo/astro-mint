@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { Search as SearchIcon, X, Plus, Play, ListFilter } from "lucide-react";
+import { Search as SearchIcon, X, Plus, Play } from "lucide-react";
 import TopBar from "@/components/TopBar";
 import BottomNav from "@/components/BottomNav";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const categories = [
   "AI", "Manufacturing", "ML", "B2B", "SaaS", "Fintech", "HealthTech", 
@@ -211,24 +210,27 @@ const forYouContent = [
   }
 ];
 
-type FilterType = "investors" | "startups" | "reels";
+type FilterType = "investors" | "startups" | "posts" | "reels";
 
 const Search = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [activeFilter, setActiveFilter] = useState<FilterType>("investors");
-
-  const toggleCategory = (category: string) => {
-    setSelectedCategories(prev => 
-      prev.includes(category) 
-        ? prev.filter(c => c !== category)
-        : [...prev, category]
-    );
-  };
+  const [activeFilter, setActiveFilter] = useState<FilterType | null>(null);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const clearSearch = () => {
     setSearchQuery("");
-    setSelectedCategories([]);
+    setActiveFilter(null);
+    setShowSuggestions(false);
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    setShowSuggestions(e.target.value.length > 0);
+  };
+
+  const handleFilterSelect = (filter: FilterType) => {
+    setActiveFilter(filter);
+    setShowSuggestions(false);
   };
 
   return (
@@ -236,113 +238,60 @@ const Search = () => {
       <TopBar />
       
       <main className="pt-14 px-4 max-w-2xl mx-auto">
-        {/* Search Bar with Topics */}
+        {/* Search Bar */}
         <div className="mt-6 mb-4">
-          <div className="flex items-center gap-2">
-            <div className="relative flex-1">
-              <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-              <Input
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search investors, startups, founders…"
-                className="pl-10 pr-10 h-12 rounded-full bg-muted border-0"
-              />
-              {(searchQuery || selectedCategories.length > 0) && (
+          <div className="relative">
+            <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground z-10" />
+            <Input
+              value={searchQuery}
+              onChange={handleSearchChange}
+              onFocus={() => searchQuery && setShowSuggestions(true)}
+              placeholder="Search investors, startups, founders…"
+              className="pl-10 pr-10 h-12 rounded-full bg-muted border-0"
+            />
+            {searchQuery && (
+              <button
+                onClick={clearSearch}
+                className="absolute right-3 top-1/2 -translate-y-1/2 z-10"
+              >
+                <X className="w-5 h-5 text-muted-foreground" />
+              </button>
+            )}
+            
+            {/* Category Suggestions Dropdown */}
+            {showSuggestions && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-card border border-border rounded-lg shadow-lg overflow-hidden z-20">
                 <button
-                  onClick={clearSearch}
-                  className="absolute right-3 top-1/2 -translate-y-1/2"
+                  onClick={() => handleFilterSelect("investors")}
+                  className="w-full px-4 py-3 text-left hover:bg-muted transition-colors flex items-center gap-2 text-foreground"
                 >
-                  <X className="w-5 h-5 text-muted-foreground" />
+                  <span className="text-sm font-medium">Investors</span>
                 </button>
-              )}
-            </div>
-
-            {/* Topics Filter Popover */}
-            <Popover>
-              <PopoverTrigger asChild>
-                <button className="relative h-12 w-12 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80 transition-colors flex-shrink-0">
-                  <ListFilter className="w-5 h-5 text-foreground" />
-                  {selectedCategories.length > 0 && (
-                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary text-primary-foreground text-xs rounded-full flex items-center justify-center">
-                      {selectedCategories.length}
-                    </span>
-                  )}
+                <button
+                  onClick={() => handleFilterSelect("startups")}
+                  className="w-full px-4 py-3 text-left hover:bg-muted transition-colors flex items-center gap-2 text-foreground border-t border-border"
+                >
+                  <span className="text-sm font-medium">Startups</span>
                 </button>
-              </PopoverTrigger>
-              <PopoverContent className="w-80 max-h-96 overflow-y-auto" align="end">
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-foreground">Topics</h3>
-                    {selectedCategories.length > 0 && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setSelectedCategories([])}
-                        className="h-auto p-0 text-xs text-muted-foreground hover:text-foreground"
-                      >
-                        Clear all
-                      </Button>
-                    )}
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {categories.map((category) => {
-                      const isSelected = selectedCategories.includes(category);
-                      return (
-                        <Badge
-                          key={category}
-                          variant={isSelected ? "default" : "outline"}
-                          onClick={() => toggleCategory(category)}
-                          className="cursor-pointer transition-all"
-                        >
-                          {category}
-                        </Badge>
-                      );
-                    })}
-                  </div>
-                </div>
-              </PopoverContent>
-            </Popover>
+                <button
+                  onClick={() => handleFilterSelect("posts")}
+                  className="w-full px-4 py-3 text-left hover:bg-muted transition-colors flex items-center gap-2 text-foreground border-t border-border"
+                >
+                  <span className="text-sm font-medium">Posts</span>
+                </button>
+                <button
+                  onClick={() => handleFilterSelect("reels")}
+                  className="w-full px-4 py-3 text-left hover:bg-muted transition-colors flex items-center gap-2 text-foreground border-t border-border"
+                >
+                  <span className="text-sm font-medium">Reels</span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Filter Tabs */}
-        {(searchQuery || selectedCategories.length > 0) && (
-          <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
-            <button
-              onClick={() => setActiveFilter("investors")}
-              className={`px-6 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
-                activeFilter === "investors"
-                  ? "bg-foreground text-background"
-                  : "bg-muted text-foreground hover:bg-muted/80"
-              }`}
-            >
-              Investors
-            </button>
-            <button
-              onClick={() => setActiveFilter("startups")}
-              className={`px-6 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
-                activeFilter === "startups"
-                  ? "bg-foreground text-background"
-                  : "bg-muted text-foreground hover:bg-muted/80"
-              }`}
-            >
-              Startups
-            </button>
-            <button
-              onClick={() => setActiveFilter("reels")}
-              className={`px-6 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
-                activeFilter === "reels"
-                  ? "bg-foreground text-background"
-                  : "bg-muted text-foreground hover:bg-muted/80"
-              }`}
-            >
-              Reels
-            </button>
-          </div>
-        )}
-
         {/* Search Results */}
-        {(searchQuery || selectedCategories.length > 0) && (
+        {searchQuery && activeFilter && (
           <div className="space-y-6">
             {/* Investors Section */}
             {activeFilter === "investors" && (
@@ -438,11 +387,20 @@ const Search = () => {
             </div>
             )}
 
+            {/* Posts Section */}
+            {activeFilter === "posts" && (
+              <div className="text-center py-16">
+                <p className="text-muted-foreground">
+                  Posts search coming soon
+                </p>
+              </div>
+            )}
+
             {/* Reels Section */}
             {activeFilter === "reels" && (
               <div className="text-center py-16">
                 <p className="text-muted-foreground">
-                  Reels feature coming soon
+                  Reels search coming soon
                 </p>
               </div>
             )}
@@ -450,7 +408,7 @@ const Search = () => {
         )}
 
         {/* For You Feed - Default View */}
-        {!searchQuery && selectedCategories.length === 0 && (
+        {!searchQuery && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-foreground">For You</h2>
