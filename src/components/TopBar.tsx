@@ -1,7 +1,6 @@
 import { Search, MessageCircle, ChevronLeft, Briefcase, Bell } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
-import GrantsSheet from "./GrantsSheet";
 
 const TopBar = () => {
   const navigate = useNavigate();
@@ -10,7 +9,6 @@ const TopBar = () => {
   const isCompanyProfile = location.pathname.startsWith('/company/');
   const isTradePage = location.pathname === '/trade';
   const fromPath = location.state?.from;
-  const [grantsOpen, setGrantsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
 
@@ -55,7 +53,7 @@ const TopBar = () => {
               </button>
 
               <button 
-                onClick={() => setGrantsOpen(true)}
+                onClick={() => navigate('/opportunities')}
                 className="p-2 rounded-lg hover:bg-muted/80 transition-all duration-300 active:scale-95"
               >
                 <Briefcase className="w-5 h-5 text-foreground" strokeWidth={2} />
@@ -96,8 +94,6 @@ const TopBar = () => {
           </button>
         </div>
       </div>
-      
-      <GrantsSheet open={grantsOpen} onOpenChange={setGrantsOpen} />
     </header>
   );
 };
