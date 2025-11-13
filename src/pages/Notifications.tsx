@@ -142,7 +142,13 @@ const Notifications = () => {
             <ChevronLeft className="w-5 h-5 text-foreground" />
           </button>
           
-          <h1 className="text-lg font-semibold text-foreground">Notifications</h1>
+          <div className="flex items-center gap-1.5">
+            <h1 className="text-lg font-semibold text-foreground">{localStorage.getItem("userName") || "User"}</h1>
+            <svg className="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+              <circle cx="12" cy="12" r="11" fill="none" stroke="currentColor" strokeWidth="2"/>
+            </svg>
+          </div>
           
           <div className="w-9" /> {/* Spacer for centering */}
         </div>
@@ -152,7 +158,7 @@ const Notifications = () => {
       <main className="max-w-2xl mx-auto">
         {/* Unread Badge */}
         {unreadCount > 0 && (
-          <div className="px-4 py-3 border-b border-border bg-primary/5">
+          <div className="px-4 py-3 bg-primary/5">
             <p className="text-sm font-medium text-foreground">
               You have <span className="text-primary">{unreadCount}</span> new notification{unreadCount !== 1 ? 's' : ''}
             </p>
@@ -160,7 +166,7 @@ const Notifications = () => {
         )}
 
         {/* Notifications List */}
-        <div className="divide-y divide-border">
+        <div>
           {notifications.map((notification) => (
             <div
               key={notification.id}
