@@ -28,9 +28,9 @@ const TopBar = () => {
       const currentScrollY = window.scrollY;
       
       if (isSecondMode) {
-        // In second mode, only hide on scroll up, don't auto-show
-        if (currentScrollY < lastScrollY && lastScrollY - currentScrollY > 5) {
-          // Scrolling up
+        // In second mode, hide on scroll down, don't auto-show
+        if (currentScrollY > lastScrollY && currentScrollY > 50) {
+          // Scrolling down
           setIsVisible(false);
           setManuallyHidden(true);
         }
