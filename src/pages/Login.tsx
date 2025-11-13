@@ -1,126 +1,110 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Building2, User, CheckCircle2 } from "lucide-react";
-
-const users = [
-  {
-    id: "john",
-    name: "John",
-    type: "investor" as const,
-    verified: true,
-    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop",
-  },
-  {
-    id: "ramesh",
-    name: "Ramesh",
-    type: "investor" as const,
-    verified: false,
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop",
-  },
-  {
-    id: "airbound",
-    name: "Airbound",
-    type: "startup" as const,
-    verified: true,
-    avatar: "https://images.unsplash.com/photo-1551434678-e076c223a692?w=400&h=400&fit=crop",
-  },
-  {
-    id: "zlyft",
-    name: "Zlyft",
-    type: "startup" as const,
-    verified: false,
-    avatar: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=400&fit=crop",
-  },
-];
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
 
 const Login = () => {
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  useEffect(() => {
-    // Check if user is already logged in
-    const userId = localStorage.getItem("userId");
-    const userMode = localStorage.getItem("userMode");
-    
-    if (userId && userMode) {
-      // Redirect to appropriate profile
-      if (userMode === "investor") {
-        navigate("/profile");
-      } else {
-        navigate("/startup-profile");
-      }
-    }
-  }, [navigate]);
-
-  const handleLogin = (user: typeof users[0]) => {
-    localStorage.setItem("userId", user.id);
-    localStorage.setItem("userName", user.name);
-    localStorage.setItem("userMode", user.type);
-    localStorage.setItem("isVerified", user.verified.toString());
-    
-    if (user.type === "investor") {
-      navigate("/profile");
-    } else {
-      navigate("/startup-profile");
-    }
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Dummy login - just navigate to home
+    localStorage.setItem("userId", "dummy-user");
+    localStorage.setItem("userName", "User");
+    localStorage.setItem("userMode", "investor");
+    navigate("/");
   };
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="max-w-2xl w-full space-y-6">
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold text-foreground">Select Your Profile</h1>
-          <p className="text-muted-foreground">Choose an account to continue</p>
+      <div className="w-full max-w-[350px] space-y-8">
+        {/* Logo */}
+        <div className="text-center space-y-6">
+          <h1 className="text-5xl font-['Pacifico'] text-foreground">
+            Atmosphere
+          </h1>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {users.map((user) => (
-            <Card 
-              key={user.id}
-              className="cursor-pointer hover:border-primary transition-all hover:shadow-lg"
-              onClick={() => handleLogin(user)}
+        {/* Login Form */}
+        <div className="bg-card border border-border rounded-sm p-10">
+          <form onSubmit={handleLogin} className="space-y-2">
+            <Input
+              type="text"
+              placeholder="Phone number, username, or email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="h-9 text-xs bg-background border-border/50"
+            />
+            <Input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="h-9 text-xs bg-background border-border/50"
+            />
+            <Button
+              type="submit"
+              className="w-full h-8 text-sm font-semibold mt-4"
             >
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="relative">
-                      <img 
-                        src={user.avatar} 
-                        alt={user.name}
-                        className="h-12 w-12 rounded-full object-cover"
-                      />
-                      {user.type === "investor" && (
-                        <User className="absolute -bottom-1 -right-1 h-5 w-5 bg-primary text-primary-foreground rounded-full p-1" />
-                      )}
-                      {user.type === "startup" && (
-                        <Building2 className="absolute -bottom-1 -right-1 h-5 w-5 bg-primary text-primary-foreground rounded-full p-1" />
-                      )}
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-lg">{user.name}</span>
-                        {user.verified && (
-                          <CheckCircle2 className="h-5 w-5 text-blue-500" />
-                        )}
-                      </div>
-                      <p className="text-xs text-muted-foreground capitalize">
-                        {user.type}
-                      </p>
-                    </div>
-                  </div>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Badge 
-                  variant={user.verified ? "default" : "secondary"}
-                  className={user.verified ? "bg-green-600" : ""}
-                >
-                  {user.verified ? "Verified" : "Unverified"}
-                </Badge>
-              </CardContent>
-            </Card>
-          ))}
+              Log in
+            </Button>
+          </form>
+
+          <div className="flex items-center gap-4 my-5">
+            <Separator className="flex-1" />
+            <span className="text-xs font-semibold text-muted-foreground uppercase">
+              Or
+            </span>
+            <Separator className="flex-1" />
+          </div>
+
+          <button className="w-full flex items-center justify-center gap-2 text-sm font-semibold text-primary">
+            <svg
+              className="w-4 h-4"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M9.198 21.5h4v-8.01h3.604l.396-3.98h-4V7.5a1 1 0 0 1 1-1h3v-4h-3a5 5 0 0 0-5 5v2.01h-2l-.396 3.98h2.396v8.01Z" />
+            </svg>
+            Log in with Facebook
+          </button>
+
+          <button className="w-full text-xs text-primary mt-4">
+            Forgot password?
+          </button>
+        </div>
+
+        {/* Sign Up */}
+        <div className="bg-card border border-border rounded-sm p-6 text-center">
+          <p className="text-sm text-foreground">
+            Don't have an account?{" "}
+            <button
+              onClick={() => navigate("/signup")}
+              className="text-primary font-semibold"
+            >
+              Sign up
+            </button>
+          </p>
+        </div>
+
+        {/* Get the app */}
+        <div className="text-center space-y-4">
+          <p className="text-sm text-foreground">Get the app.</p>
+          <div className="flex gap-2 justify-center">
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Download_on_the_App_Store_Badge.svg/320px-Download_on_the_App_Store_Badge.svg.png"
+              alt="Download on App Store"
+              className="h-10 cursor-pointer"
+            />
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Google_Play_Store_badge_EN.svg/320px-Google_Play_Store_badge_EN.svg.png"
+              alt="Get it on Google Play"
+              className="h-10 cursor-pointer"
+            />
+          </div>
         </div>
       </div>
     </div>

@@ -15,6 +15,8 @@ import StartupProfile from "./pages/StartupProfile";
 import Assets from "./pages/Assets";
 import Settings from "./pages/Settings";
 import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import RoleSelection from "./pages/RoleSelection";
 import NotFound from "./pages/NotFound";
 import Opportunities from "./pages/Opportunities";
 import Meetings from "./pages/Meetings";
@@ -31,6 +33,8 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/role-selection" element={<RoleSelection />} />
           <Route path="/trade" element={<Trade />} />
           <Route path="/messages" element={<Messages />} />
           <Route path="/search" element={<Search />} />
