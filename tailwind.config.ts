@@ -14,7 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        cursive: ['Dancing Script', 'cursive'],
+        cursive: ['Pacifico', 'cursive'],
       },
       colors: {
         border: {

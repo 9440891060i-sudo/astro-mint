@@ -64,8 +64,8 @@ const TopBar = () => {
 
         {/* Center - App Name */}
         <div className="absolute left-1/2 transform -translate-x-1/2">
-          <h1 className="font-cursive text-2xl font-semibold text-foreground">
-            Ventura
+          <h1 className="font-cursive text-2xl text-foreground">
+            Atmosphere
           </h1>
         </div>
 
