@@ -84,86 +84,86 @@ const Meetings = () => {
       <TopBar />
 
       <main className="pt-14 max-w-2xl mx-auto">
-        <div className="px-4 py-6 space-y-6">
+        <div className="px-4 py-4 space-y-4">
           {/* Launch Meeting Button */}
-          <div className="space-y-4">
+          <div className="space-y-3">
             <Button
               onClick={() => setLaunchExpanded(!launchExpanded)}
               variant="outline"
-              className={`w-full h-14 text-lg font-semibold border-2 rounded-2xl transition-all ${
+              className={`w-full h-11 text-base font-semibold border-2 rounded-xl transition-all ${
                 launchExpanded 
                   ? "bg-primary text-primary-foreground border-primary hover:bg-primary/90" 
                   : "bg-background border-border hover:bg-muted"
               }`}
             >
               Launch meeting
-              <ChevronDown className={`w-5 h-5 ml-2 transition-transform ${launchExpanded ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`w-4 h-4 ml-2 transition-transform ${launchExpanded ? 'rotate-180' : ''}`} />
             </Button>
 
             {/* Launch Meeting Expanded Form */}
             {launchExpanded && (
-              <div className="border-2 border-border rounded-2xl p-5 space-y-4 bg-card/50 animate-in slide-in-from-top-2 duration-300">
-                <div className="space-y-2">
-                  <Label htmlFor="meeting-title">Meeting Title</Label>
-                  <Input id="meeting-title" placeholder="Enter meeting title" className="h-11" />
+              <div className="border border-border rounded-xl p-4 space-y-3 bg-card animate-in slide-in-from-top-2 duration-300">
+                <div className="space-y-1.5">
+                  <Label htmlFor="meeting-title" className="text-sm">Meeting Title</Label>
+                  <Input id="meeting-title" placeholder="Enter meeting title" className="h-9" />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="meeting-date">Date</Label>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="meeting-date" className="text-sm">Date</Label>
                     <Input 
                       id="meeting-date" 
                       type="date" 
-                      className="h-11" 
+                      className="h-9" 
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="meeting-time">Time</Label>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="meeting-time" className="text-sm">Time</Label>
                     <Input 
                       id="meeting-time" 
                       type="time" 
-                      className="h-11" 
+                      className="h-9" 
                     />
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label>Meeting Type</Label>
+                <div className="space-y-1.5">
+                  <Label className="text-sm">Meeting Type</Label>
                   <div className="grid grid-cols-2 gap-2">
                     <Button
                       variant={meetingType === "public" ? "default" : "outline"}
                       size="sm"
                       onClick={() => setMeetingType("public")}
-                      className="justify-start h-10"
+                      className="justify-start h-8 text-xs"
                     >
-                      <Users className="w-4 h-4 mr-2" />
+                      <Users className="w-3 h-3 mr-1.5" />
                       Public
                     </Button>
                     <Button
                       variant={meetingType === "followers" ? "default" : "outline"}
                       size="sm"
                       onClick={() => setMeetingType("followers")}
-                      className="justify-start h-10"
+                      className="justify-start h-8 text-xs"
                     >
-                      <Users className="w-4 h-4 mr-2" />
-                      Followers Only
+                      <Users className="w-3 h-3 mr-1.5" />
+                      Followers
                     </Button>
                   </div>
                   <Button
                     variant={meetingType === "private" ? "default" : "outline"}
                     size="sm"
                     onClick={() => setMeetingType("private")}
-                    className="w-full justify-start h-10"
+                    className="w-full justify-start h-8 text-xs"
                   >
-                    <Users className="w-4 h-4 mr-2" />
-                    Private (Invite Only)
+                    <Users className="w-3 h-3 mr-1.5" />
+                    Private
                   </Button>
                 </div>
 
-                <div className="space-y-2">
-                  <Label>Select Industries (up to 3)</Label>
-                  <ScrollArea className="h-32 border border-border rounded-lg p-3 bg-background">
-                    <div className="flex flex-wrap gap-2">
+                <div className="space-y-1.5">
+                  <Label className="text-sm">Industries (up to 3)</Label>
+                  <ScrollArea className="h-24 border border-border rounded-lg p-2 bg-background">
+                    <div className="flex flex-wrap gap-1.5">
                       {industryTags.map(tag => (
                         <Button
                           key={tag}
@@ -171,7 +171,7 @@ const Meetings = () => {
                           variant={selectedIndustries.includes(tag) ? "default" : "outline"}
                           onClick={() => toggleIndustry(tag)}
                           disabled={!selectedIndustries.includes(tag) && selectedIndustries.length >= 3}
-                          className="text-xs h-8"
+                          className="text-xs h-7 px-2"
                         >
                           {tag}
                         </Button>
@@ -180,8 +180,8 @@ const Meetings = () => {
                   </ScrollArea>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="max-participants">Max Participants: 50</Label>
+                <div className="space-y-1.5">
+                  <Label htmlFor="max-participants" className="text-sm">Max: 50</Label>
                   <Slider
                     id="max-participants"
                     defaultValue={[50]}
@@ -192,7 +192,7 @@ const Meetings = () => {
                   />
                 </div>
 
-                <Button className="w-full h-11">
+                <Button className="w-full h-9 text-sm">
                   Launch Meeting
                 </Button>
               </div>
@@ -200,53 +200,53 @@ const Meetings = () => {
           </div>
 
           {/* Search Public Meetings Section */}
-          <div className="border-2 border-border rounded-2xl p-5 bg-card/50 space-y-4">
+          <div className="border border-border rounded-xl p-4 bg-card space-y-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold">Search Public Meetings</h2>
-              <Button variant="ghost" size="icon" className="h-9 w-9">
-                <Filter className="w-5 h-5" />
+              <h2 className="text-base font-semibold">Search Public Meetings</h2>
+              <Button variant="ghost" size="icon" className="h-8 w-8">
+                <Filter className="w-4 h-4" />
               </Button>
             </div>
 
             {/* Public Meetings List - Always Visible */}
-            <div className="space-y-3">
+            <div className="space-y-2">
               {filteredMeetings.map(meeting => (
                 <div 
                   key={meeting.id}
-                  className="border border-border rounded-xl p-4 bg-card hover:bg-muted/30 transition-all"
+                  className="border border-border rounded-lg p-3 bg-background hover:bg-muted/50 transition-all"
                 >
-                  <div className="flex items-start gap-3">
-                    <Avatar className="w-12 h-12">
+                  <div className="flex items-start gap-2.5">
+                    <Avatar className="w-10 h-10">
                       <AvatarImage src={meeting.hostAvatar} alt={meeting.host} />
                       <AvatarFallback>{meeting.host[0]}</AvatarFallback>
                     </Avatar>
 
-                    <div className="flex-1 space-y-2">
+                    <div className="flex-1 min-w-0 space-y-1.5">
                       <div>
-                        <p className="text-sm text-muted-foreground">Hosted by {meeting.host}</p>
-                        <h3 className="font-semibold text-base mt-0.5">{meeting.title}</h3>
+                        <p className="text-xs text-muted-foreground">Hosted by {meeting.host}</p>
+                        <h3 className="font-semibold text-sm mt-0.5 leading-tight">{meeting.title}</h3>
                       </div>
 
-                      <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-1.5">
                         {meeting.industries.map((industry, idx) => (
-                          <Badge key={idx} variant={idx === 0 ? "default" : "secondary"} className="text-xs">
+                          <Badge key={idx} variant={idx === 0 ? "default" : "secondary"} className="text-xs h-5 px-2">
                             {industry}
                           </Badge>
                         ))}
                         {meeting.eligible && (
-                          <Badge variant="outline" className="text-xs text-green-600 border-green-600">
+                          <Badge variant="outline" className="text-xs h-5 px-2 text-green-600 border-green-600">
                             Eligible
                           </Badge>
                         )}
                       </div>
 
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                        <Clock className="w-4 h-4" />
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                        <Clock className="w-3 h-3" />
                         <span>Starts in {meeting.startsIn}</span>
                       </div>
                     </div>
 
-                    <Button size="sm" className="h-9 px-6">
+                    <Button size="sm" className="h-8 px-4 text-xs flex-shrink-0">
                       Join
                     </Button>
                   </div>
@@ -255,8 +255,8 @@ const Meetings = () => {
             </div>
 
             {/* Search Meeting Input */}
-            <div className="pt-2">
-              <Label htmlFor="search-meeting" className="text-sm font-medium mb-2 block">
+            <div className="pt-1">
+              <Label htmlFor="search-meeting" className="text-xs font-medium mb-1.5 block">
                 Search Meeting
               </Label>
               <div className="flex gap-2">
@@ -265,10 +265,10 @@ const Meetings = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search by title or host..."
-                  className="h-12 flex-1"
+                  className="h-9 flex-1 text-sm"
                 />
-                <Button size="icon" className="h-12 w-12 flex-shrink-0">
-                  <Search className="w-5 h-5" />
+                <Button size="icon" className="h-9 w-9 flex-shrink-0">
+                  <Search className="w-4 h-4" />
                 </Button>
               </div>
             </div>
