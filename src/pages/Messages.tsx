@@ -1,13 +1,22 @@
-import { User, Plus, ArrowLeft, ChevronDown } from "lucide-react";
+import { User, Plus, ArrowLeft, ChevronDown, Search, X } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 type TabType = "all" | "groups";
 
@@ -28,6 +37,13 @@ const Messages = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<TabType>("all");
   const [filter, setFilter] = useState<string>("All");
+  const [groupSearch, setGroupSearch] = useState<string>("");
+  const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
+  const [showCreateForm, setShowCreateForm] = useState<boolean>(false);
+  const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
+  const [newGroupName, setNewGroupName] = useState<string>("");
+  const [newGroupDescription, setNewGroupDescription] = useState<string>("");
+  const [newGroupType, setNewGroupType] = useState<string>("Public");
 
   const messages: Message[] = [
     {
@@ -87,6 +103,30 @@ const Messages = () => {
       lastMessage: "Check out this new research paper",
     },
   ];
+
+  const searchSuggestions: Group[] = [
+    { id: 4, name: "AI Startups", members: 445, lastMessage: "" },
+    { id: 5, name: "Drone Space Gis", members: 89, lastMessage: "" },
+    { id: 6, name: "FinTech Innovators", members: 312, lastMessage: "" },
+    { id: 7, name: "SaaS Founders", members: 567, lastMessage: "" },
+  ];
+
+  const filteredSearchGroups = searchSuggestions.filter(group =>
+    group.name.toLowerCase().includes(groupSearch.toLowerCase())
+  );
+
+  const handleCreateGroup = () => {
+    // Handle group creation logic
+    setShowCreateForm(false);
+    setNewGroupName("");
+    setNewGroupDescription("");
+    setNewGroupType("Public");
+  };
+
+  const handleJoinGroup = (group: Group) => {
+    // Handle join group logic
+    setSelectedGroup(null);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -164,16 +204,6 @@ const Messages = () => {
             )}
           </button>
           
-          {/* Create/Join Group Button - Only show in Groups tab */}
-          {activeTab === "groups" && (
-            <Button 
-              size="sm" 
-              className="ml-2"
-            >
-              <Plus className="w-4 h-4 mr-1" />
-              New Group
-            </Button>
-          )}
         </div>
       </div>
 
@@ -205,32 +235,162 @@ const Messages = () => {
           ) : (
             // Groups View
             <div className="px-4">
-              {/* Groups List */}
-              {groups.map((group) => (
-                <button key={group.id} className="w-full py-4 flex items-start gap-3 hover:bg-muted/50 transition-colors text-left rounded-lg">
-                  {/* Group Avatar */}
-                  <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
-                    <User className="w-6 h-6 text-primary" strokeWidth={2} />
-                  </div>
+              {/* Search Bar and Create Button */}
+              <div className="mb-4 flex items-center gap-2">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search groups..."
+                    value={groupSearch}
+                    onChange={(e) => setGroupSearch(e.target.value)}
+                    onFocus={() => setIsSearchFocused(true)}
+                    onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
+                    className="pl-9 pr-9"
+                  />
+                  {groupSearch && (
+                    <button
+                      onClick={() => setGroupSearch("")}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+                <Button
+                  size="icon"
+                  onClick={() => setShowCreateForm(!showCreateForm)}
+                  className="flex-shrink-0"
+                >
+                  <Plus className="w-5 h-5" />
+                </Button>
+              </div>
 
-                  {/* Group Content */}
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-foreground mb-1">
-                      {group.name}
-                    </h3>
-                    <p className="text-xs text-muted-foreground mb-1">
-                      {group.members} members
-                    </p>
-                    <p className="text-sm text-muted-foreground truncate">
-                      {group.lastMessage}
-                    </p>
+              {/* Create Group Form */}
+              {showCreateForm && (
+                <div className="mb-4 p-4 bg-muted/30 rounded-lg space-y-3">
+                  <h3 className="font-semibold text-sm">Create New Group</h3>
+                  <Input
+                    placeholder="Group name"
+                    value={newGroupName}
+                    onChange={(e) => setNewGroupName(e.target.value)}
+                  />
+                  <Textarea
+                    placeholder="Description"
+                    value={newGroupDescription}
+                    onChange={(e) => setNewGroupDescription(e.target.value)}
+                    className="min-h-[80px]"
+                  />
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={newGroupType}
+                      onChange={(e) => setNewGroupType(e.target.value)}
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    >
+                      <option>Public</option>
+                      <option>Private</option>
+                    </select>
                   </div>
-                </button>
-              ))}
+                  <div className="flex gap-2">
+                    <Button onClick={handleCreateGroup} className="flex-1">
+                      Create Group
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowCreateForm(false)}
+                      className="flex-1"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Search Results or Groups List */}
+              {isSearchFocused || groupSearch ? (
+                // Search Results
+                <div>
+                  <p className="text-sm text-muted-foreground mb-3 px-1">
+                    {groupSearch ? "Search Results" : "Suggested Groups"}
+                  </p>
+                  {filteredSearchGroups.map((group) => (
+                    <button
+                      key={group.id}
+                      onClick={() => setSelectedGroup(group)}
+                      className="w-full py-3 flex items-start gap-3 hover:bg-muted/50 transition-colors text-left rounded-lg"
+                    >
+                      <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                        <User className="w-6 h-6 text-primary" strokeWidth={2} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-foreground mb-1">
+                          {group.name}
+                        </h3>
+                        <p className="text-xs text-muted-foreground">
+                          {group.members} members
+                        </p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                // Groups List
+                <>
+                  {groups.map((group) => (
+                    <button
+                      key={group.id}
+                      className="w-full py-4 flex items-start gap-3 hover:bg-muted/50 transition-colors text-left rounded-lg"
+                    >
+                      <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                        <User className="w-6 h-6 text-primary" strokeWidth={2} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-foreground mb-1">
+                          {group.name}
+                        </h3>
+                        <p className="text-xs text-muted-foreground mb-1">
+                          {group.members} members
+                        </p>
+                        <p className="text-sm text-muted-foreground truncate">
+                          {group.lastMessage}
+                        </p>
+                      </div>
+                    </button>
+                  ))}
+                </>
+              )}
             </div>
           )}
         </div>
       </main>
+
+      {/* Group Preview Dialog */}
+      <Dialog open={!!selectedGroup} onOpenChange={() => setSelectedGroup(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                <User className="w-6 h-6 text-primary" strokeWidth={2} />
+              </div>
+              <div>
+                <h3 className="font-semibold">{selectedGroup?.name}</h3>
+                <p className="text-sm text-muted-foreground">
+                  {selectedGroup?.members} members
+                </p>
+              </div>
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="text-sm text-muted-foreground">
+              Join this group to connect with like-minded professionals and stay updated with the latest discussions.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button onClick={() => selectedGroup && handleJoinGroup(selectedGroup)} className="w-full">
+              Join Group
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
