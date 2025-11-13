@@ -346,28 +346,7 @@ const Trade = () => {
   const [savedSellers, setSavedSellers] = useState<number[]>([1, 3, 5]);
   const [savedScanAds, setSavedScanAds] = useState<number[]>([1, 4]);
   const [showSavedOnly, setShowSavedOnly] = useState(false);
-  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
   const [expandedInfoId, setExpandedInfoId] = useState<number | null>(null);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      
-      if (currentScrollY < lastScrollY) {
-        // Scrolling up
-        setIsHeaderVisible(true);
-      } else if (currentScrollY > lastScrollY && currentScrollY > 50) {
-        // Scrolling down and past 50px
-        setIsHeaderVisible(false);
-      }
-      
-      setLastScrollY(currentScrollY);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
 
   const handleToggleSaveScanAd = (adId: number) => {
     setSavedScanAds(prev => 
