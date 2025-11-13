@@ -153,6 +153,21 @@ const Settings = () => {
               />
             </div>
           </div>
+
+          {/* Logout Section */}
+          <div className="space-y-2">
+            <div className="bg-card rounded-xl border border-border/50 overflow-hidden">
+              <button
+                onClick={() => {
+                  localStorage.clear();
+                  navigate("/login");
+                }}
+                className="w-full flex items-center justify-center gap-2 p-3 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors active:scale-[0.98]"
+              >
+                <span className="font-semibold text-sm">Log Out</span>
+              </button>
+            </div>
+          </div>
         </div>
       </main>
     </div>
