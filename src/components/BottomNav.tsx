@@ -1,11 +1,14 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { Home, Rocket, TrendingUp, Film, User, Search, Briefcase, Calendar } from "lucide-react";
+import { useState, useEffect } from "react";
 
 type AppMode = "left" | "right";
 
 const BottomNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [lastLeftPage, setLastLeftPage] = useState("/");
+  const [lastRightPage, setLastRightPage] = useState("/launch");
 
   // Check if we're on a company profile that was navigated from home or reels
   const fromPath = location.state?.from;
@@ -16,6 +19,15 @@ const BottomNav = () => {
   const rightModePages = ["/launch", "/trade", "/opportunities", "/meetings"];
   
   const appMode: AppMode = rightModePages.includes(location.pathname) ? "right" : "left";
+
+  // Track the last visited page for each mode
+  useEffect(() => {
+    if (leftModePages.includes(location.pathname)) {
+      setLastLeftPage(location.pathname);
+    } else if (rightModePages.includes(location.pathname)) {
+      setLastRightPage(location.pathname);
+    }
+  }, [location.pathname]);
   
   const leftModeTabs = [
     { id: "home", icon: Home, label: "Home", path: "/" },
@@ -38,11 +50,11 @@ const BottomNav = () => {
   };
 
   const toggleMode = () => {
-    // Navigate to the first page of the other mode
+    // Navigate to the last visited page of the other mode
     if (appMode === "left") {
-      navigate("/launch"); // First page of right mode
+      navigate(lastRightPage);
     } else {
-      navigate("/"); // First page of left mode
+      navigate(lastLeftPage);
     }
   };
 
