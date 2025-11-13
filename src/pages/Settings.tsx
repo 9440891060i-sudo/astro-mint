@@ -1,8 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, User, AtSign, BarChart3, Bookmark, Activity, Settings as SettingsIcon, MessageSquare, Lock, Briefcase, Crown, HelpCircle, Info, ChevronRight } from "lucide-react";
+import { ArrowLeft, User, AtSign, BarChart3, Bookmark, Activity, Settings as SettingsIcon, MessageSquare, Lock, Briefcase, Crown, HelpCircle, Info, ChevronRight, Mail, Phone as PhoneIcon, KeyRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerClose } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -12,8 +13,15 @@ import { toast } from "sonner";
 
 const Settings = () => {
   const navigate = useNavigate();
-  const [editNameOpen, setEditNameOpen] = useState(false);
-  const [editUsernameOpen, setEditUsernameOpen] = useState(false);
+  
+  // Account Information Drawers
+  const [nameDrawerOpen, setNameDrawerOpen] = useState(false);
+  const [usernameDrawerOpen, setUsernameDrawerOpen] = useState(false);
+  const [passwordDrawerOpen, setPasswordDrawerOpen] = useState(false);
+  const [emailDrawerOpen, setEmailDrawerOpen] = useState(false);
+  const [phoneDrawerOpen, setPhoneDrawerOpen] = useState(false);
+  
+  // Other Dialogs
   const [savedContentOpen, setSavedContentOpen] = useState(false);
   const [activityOpen, setActivityOpen] = useState(false);
   const [preferencesOpen, setPreferencesOpen] = useState(false);
@@ -24,19 +32,51 @@ const Settings = () => {
   const [supportOpen, setSupportOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
 
+  // Form states
   const [name, setName] = useState("John Doe");
   const [username, setUsername] = useState("johndoe");
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [email, setEmail] = useState("john.doe@example.com");
+  const [emailCode, setEmailCode] = useState("");
+  const [phone, setPhone] = useState("+1234567890");
+  const [phoneCode, setPhoneCode] = useState("");
   const [commentsEnabled, setCommentsEnabled] = useState(true);
   const [connectEnabled, setConnectEnabled] = useState(true);
 
   const handleSaveName = () => {
     toast.success("Name updated successfully");
-    setEditNameOpen(false);
+    setNameDrawerOpen(false);
   };
 
   const handleSaveUsername = () => {
     toast.success("Username updated successfully");
-    setEditUsernameOpen(false);
+    setUsernameDrawerOpen(false);
+  };
+
+  const handleSavePassword = () => {
+    if (newPassword !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+    toast.success("Password updated successfully");
+    setPasswordDrawerOpen(false);
+    setOldPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+  };
+
+  const handleSaveEmail = () => {
+    toast.success("Email updated successfully");
+    setEmailDrawerOpen(false);
+    setEmailCode("");
+  };
+
+  const handleSavePhone = () => {
+    toast.success("Phone updated successfully");
+    setPhoneDrawerOpen(false);
+    setPhoneCode("");
   };
 
   const SettingItem = ({ icon: Icon, title, subtitle, onClick, showArrow = true }: any) => (
@@ -73,22 +113,43 @@ const Settings = () => {
       {/* Main Content */}
       <main className="pb-24 px-4">
         <div className="max-w-2xl mx-auto space-y-6 pt-6">
-          {/* Profile Section */}
+          {/* Account Information Section */}
           <div className="space-y-2">
-            <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3">Profile</h2>
+            <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3">Account Information</h2>
             <div className="bg-card rounded-xl border border-border/50 overflow-hidden">
               <SettingItem
                 icon={User}
-                title="Edit Name"
-                subtitle="Change your display name"
-                onClick={() => setEditNameOpen(true)}
+                title="Name"
+                subtitle={name}
+                onClick={() => setNameDrawerOpen(true)}
               />
               <Separator />
               <SettingItem
                 icon={AtSign}
-                title="Edit Username"
-                subtitle="Update your username"
-                onClick={() => setEditUsernameOpen(true)}
+                title="Username"
+                subtitle={`@${username}`}
+                onClick={() => setUsernameDrawerOpen(true)}
+              />
+              <Separator />
+              <SettingItem
+                icon={KeyRound}
+                title="Password"
+                subtitle="Change your password"
+                onClick={() => setPasswordDrawerOpen(true)}
+              />
+              <Separator />
+              <SettingItem
+                icon={Mail}
+                title="Email"
+                subtitle={email}
+                onClick={() => setEmailDrawerOpen(true)}
+              />
+              <Separator />
+              <SettingItem
+                icon={PhoneIcon}
+                title="Phone"
+                subtitle={phone}
+                onClick={() => setPhoneDrawerOpen(true)}
               />
             </div>
           </div>
@@ -204,56 +265,187 @@ const Settings = () => {
         </div>
       </main>
 
-      {/* Edit Name Dialog */}
-      <Dialog open={editNameOpen} onOpenChange={setEditNameOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Name</DialogTitle>
-            <DialogDescription>Update your display name</DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 pt-4">
+      {/* Name Drawer */}
+      <Drawer open={nameDrawerOpen} onOpenChange={setNameDrawerOpen}>
+        <DrawerContent className="h-[60vh]">
+          <DrawerHeader>
+            <DrawerTitle>Change Name</DrawerTitle>
+            <DrawerDescription>Update your display name</DrawerDescription>
+          </DrawerHeader>
+          <div className="px-4 py-6 space-y-6 overflow-y-auto">
             <div className="space-y-2">
-              <Label htmlFor="name">Display Name</Label>
+              <Label htmlFor="name">Name</Label>
               <Input
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Enter your name"
+                className="h-12"
               />
+              <p className="text-xs text-muted-foreground">
+                Name can be changed once every 54 days
+              </p>
             </div>
-            <Button onClick={handleSaveName} className="w-full">
+            <Button onClick={handleSaveName} className="w-full h-12">
               Save Changes
             </Button>
           </div>
-        </DialogContent>
-      </Dialog>
+        </DrawerContent>
+      </Drawer>
 
-      {/* Edit Username Dialog */}
-      <Dialog open={editUsernameOpen} onOpenChange={setEditUsernameOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Username</DialogTitle>
-            <DialogDescription>Choose a unique username</DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 pt-4">
+      {/* Username Drawer */}
+      <Drawer open={usernameDrawerOpen} onOpenChange={setUsernameDrawerOpen}>
+        <DrawerContent className="h-[60vh]">
+          <DrawerHeader>
+            <DrawerTitle>Change Username</DrawerTitle>
+            <DrawerDescription>Update your username</DrawerDescription>
+          </DrawerHeader>
+          <div className="px-4 py-6 space-y-6 overflow-y-auto">
             <div className="space-y-2">
               <Label htmlFor="username">Username</Label>
               <Input
                 id="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="@username"
+                placeholder="Enter your username"
+                className="h-12"
               />
               <p className="text-xs text-muted-foreground">
-                Username can only contain letters, numbers, and underscores
+                Username can be changed once every 54 days
               </p>
             </div>
-            <Button onClick={handleSaveUsername} className="w-full">
+            <Button onClick={handleSaveUsername} className="w-full h-12">
               Save Changes
             </Button>
           </div>
-        </DialogContent>
-      </Dialog>
+        </DrawerContent>
+      </Drawer>
+
+      {/* Password Drawer */}
+      <Drawer open={passwordDrawerOpen} onOpenChange={setPasswordDrawerOpen}>
+        <DrawerContent className="h-[60vh]">
+          <DrawerHeader>
+            <DrawerTitle>Change Password</DrawerTitle>
+            <DrawerDescription>Update your password</DrawerDescription>
+          </DrawerHeader>
+          <div className="px-4 py-6 space-y-6 overflow-y-auto">
+            <div className="space-y-2">
+              <Label htmlFor="oldPassword">Current Password</Label>
+              <Input
+                id="oldPassword"
+                type="password"
+                value={oldPassword}
+                onChange={(e) => setOldPassword(e.target.value)}
+                placeholder="Enter current password"
+                className="h-12"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="newPassword">New Password</Label>
+              <Input
+                id="newPassword"
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Enter new password"
+                className="h-12"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword">Confirm New Password</Label>
+              <Input
+                id="confirmPassword"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm new password"
+                className="h-12"
+              />
+            </div>
+            <Button onClick={handleSavePassword} className="w-full h-12">
+              Update Password
+            </Button>
+          </div>
+        </DrawerContent>
+      </Drawer>
+
+      {/* Email Drawer */}
+      <Drawer open={emailDrawerOpen} onOpenChange={setEmailDrawerOpen}>
+        <DrawerContent className="h-[60vh]">
+          <DrawerHeader>
+            <DrawerTitle>Change Email</DrawerTitle>
+            <DrawerDescription>Update your email address</DrawerDescription>
+          </DrawerHeader>
+          <div className="px-4 py-6 space-y-6 overflow-y-auto">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email Address</Label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                className="h-12"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="emailCode">Confirmation Code</Label>
+              <Input
+                id="emailCode"
+                value={emailCode}
+                onChange={(e) => setEmailCode(e.target.value)}
+                placeholder="Enter confirmation code"
+                className="h-12"
+              />
+              <p className="text-xs text-muted-foreground">
+                We'll send a confirmation code to your new email
+              </p>
+            </div>
+            <Button onClick={handleSaveEmail} className="w-full h-12">
+              Verify & Update
+            </Button>
+          </div>
+        </DrawerContent>
+      </Drawer>
+
+      {/* Phone Drawer */}
+      <Drawer open={phoneDrawerOpen} onOpenChange={setPhoneDrawerOpen}>
+        <DrawerContent className="h-[60vh]">
+          <DrawerHeader>
+            <DrawerTitle>Change Phone</DrawerTitle>
+            <DrawerDescription>Update your phone number</DrawerDescription>
+          </DrawerHeader>
+          <div className="px-4 py-6 space-y-6 overflow-y-auto">
+            <div className="space-y-2">
+              <Label htmlFor="phone">Phone Number</Label>
+              <Input
+                id="phone"
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="Enter your phone number"
+                className="h-12"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="phoneCode">Confirmation Code</Label>
+              <Input
+                id="phoneCode"
+                value={phoneCode}
+                onChange={(e) => setPhoneCode(e.target.value)}
+                placeholder="Enter confirmation code"
+                className="h-12"
+              />
+              <p className="text-xs text-muted-foreground">
+                We'll send a confirmation code to your new phone number
+              </p>
+            </div>
+            <Button onClick={handleSavePhone} className="w-full h-12">
+              Verify & Update
+            </Button>
+          </div>
+        </DrawerContent>
+      </Drawer>
 
       {/* Saved Content Dialog */}
       <Dialog open={savedContentOpen} onOpenChange={setSavedContentOpen}>
