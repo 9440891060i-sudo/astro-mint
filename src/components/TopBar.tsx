@@ -6,11 +6,17 @@ const TopBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isMessagesPage = location.pathname === '/messages';
+  const isSearchPage = location.pathname === '/search';
   const isCompanyProfile = location.pathname.startsWith('/company/');
   const isTradePage = location.pathname === '/trade';
   const fromPath = location.state?.from;
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+
+  // Don't render the top bar on search page
+  if (isSearchPage) {
+    return null;
+  }
 
   useEffect(() => {
     const handleScroll = () => {
