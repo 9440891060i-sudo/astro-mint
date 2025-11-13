@@ -248,18 +248,18 @@ const CompanyProfile = () => {
               <div className="flex-1 pt-1">
                 <h2 className="font-normal text-sm mb-2.5">{company.name}</h2>
                 
-                <div className="flex gap-6 text-xs">
+                <div className="flex gap-6">
                   <div className="text-center">
-                    <div className="font-semibold">342</div>
-                    <div className="text-muted-foreground">posts</div>
+                    <div className="text-sm font-semibold text-foreground">342</div>
+                    <div className="text-xs text-muted-foreground">posts</div>
                   </div>
                   <div className="text-center">
-                    <div className="font-semibold">{company.isPublic ? company.followers?.toLocaleString() || '0' : '0'}</div>
-                    <div className="text-muted-foreground">followers</div>
+                    <div className="text-sm font-semibold text-foreground">{company.isPublic ? company.followers?.toLocaleString() || '0' : '0'}</div>
+                    <div className="text-xs text-muted-foreground">followers</div>
                   </div>
                   <div className="text-center">
-                    <div className="font-semibold">{company.isPublic ? company.following?.toLocaleString() || '0' : '0'}</div>
-                    <div className="text-muted-foreground">following</div>
+                    <div className="text-sm font-semibold text-foreground">{company.isPublic ? company.following?.toLocaleString() || '0' : '0'}</div>
+                    <div className="text-xs text-muted-foreground">following</div>
                   </div>
                 </div>
               </div>
