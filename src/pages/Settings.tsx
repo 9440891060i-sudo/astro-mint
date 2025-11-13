@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, User, AtSign, BarChart3, Bookmark, Activity, Settings as SettingsIcon, MessageSquare, Lock, Briefcase, Crown, HelpCircle, Info, ChevronRight, Mail, Phone as PhoneIcon, KeyRound } from "lucide-react";
+import { ArrowLeft, User, AtSign, BarChart3, Bookmark, Activity, Settings as SettingsIcon, MessageSquare, Lock, Briefcase, Crown, HelpCircle, Info, ChevronRight, Mail, Phone as PhoneIcon, KeyRound, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -150,6 +150,19 @@ const Settings = () => {
                 title="Phone"
                 subtitle={phone}
                 onClick={() => setPhoneDrawerOpen(true)}
+              />
+            </div>
+          </div>
+
+          {/* Professional Section */}
+          <div className="space-y-2">
+            <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3">Professional</h2>
+            <div className="bg-card rounded-xl border border-border/50 overflow-hidden">
+              <SettingItem
+                icon={TrendingUp}
+                title="Professional Dashboard"
+                subtitle="View your metrics and analytics"
+                onClick={() => navigate("/dashboard")}
               />
             </div>
           </div>

@@ -21,6 +21,7 @@ import NotFound from "./pages/NotFound";
 import Opportunities from "./pages/Opportunities";
 import Meetings from "./pages/Meetings";
 import Notifications from "./pages/Notifications";
+import Dashboard from "./pages/Dashboard";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +48,7 @@ const App = () => (
           <Route path="/startup-profile" element={<StartupProfile />} />
           <Route path="/assets" element={<Assets />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/company/:companyId" element={<CompanyProfile />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
