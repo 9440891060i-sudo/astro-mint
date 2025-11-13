@@ -27,6 +27,8 @@ const Profile = () => {
   const isVerified = localStorage.getItem("isVerified") === "true";
   const userName = localStorage.getItem("userName") || "John";
   const userId = localStorage.getItem("userId") || "john";
+  const [activeSection, setActiveSection] = useState<'posts' | 'expand' | 'trades'>('posts');
+  const [showReels, setShowReels] = useState(false);
 
   // Mock investor data
   const investorData = {
@@ -233,228 +235,371 @@ const Profile = () => {
             </p>
           </div>
 
-          {/* Tabbed Content Section */}
-          <div className="mt-4">
-            {!isVerified ? (
-              <Card className="mx-4">
-                <CardContent className="py-6 text-center space-y-3">
-                  <div className="w-12 h-12 mx-auto bg-orange-100 rounded-full flex items-center justify-center">
-                    <XCircle className="h-6 w-6 text-orange-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-base font-semibold text-foreground mb-1">
-                      Portfolio Not Visible
-                    </h3>
-                    <p className="text-xs text-muted-foreground">
-                      Verify your account to showcase your portfolio to others
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <Tabs defaultValue="portfolio" className="w-full">
-                <TabsList className="w-full grid grid-cols-2 mb-4">
-                  <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
-                  <TabsTrigger value="criteria">Criteria</TabsTrigger>
-                </TabsList>
+          {/* Three Section Navigation */}
+          <div className="mt-6 border-t border-border">
+            <div className="grid grid-cols-3 text-center">
+              <button
+                onClick={() => setActiveSection('posts')}
+                className={`py-3 text-sm font-medium border-b-2 transition-colors ${
+                  activeSection === 'posts'
+                    ? 'border-foreground text-foreground'
+                    : 'border-transparent text-muted-foreground'
+                }`}
+              >
+                Posts
+              </button>
+              <button
+                onClick={() => setActiveSection('expand')}
+                className={`py-3 text-sm font-medium border-b-2 transition-colors ${
+                  activeSection === 'expand'
+                    ? 'border-foreground text-foreground'
+                    : 'border-transparent text-muted-foreground'
+                }`}
+              >
+                Expand
+              </button>
+              <button
+                onClick={() => setActiveSection('trades')}
+                className={`py-3 text-sm font-medium border-b-2 transition-colors ${
+                  activeSection === 'trades'
+                    ? 'border-foreground text-foreground'
+                    : 'border-transparent text-muted-foreground'
+                }`}
+              >
+                Trades
+              </button>
+            </div>
+          </div>
 
-              {/* Portfolio Tab */}
-              <TabsContent value="portfolio" className="space-y-3 px-4">
-                {/* Portfolio Summary Header */}
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm flex items-center gap-2">
-                      <Wallet className="h-4 w-4 text-primary" />
-                      Portfolio Summary
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3 pt-2">
-                    <div>
-                      <p className="text-xs text-muted-foreground mb-1">Total Portfolio Value</p>
-                      <h2 className="text-xl font-bold text-foreground">
-                        {formatCurrency(currentPortfolioValue)}
-                      </h2>
+          {/* Content Sections */}
+          <div className="px-4 py-4">
+            {activeSection === 'posts' && (
+              <div className="space-y-4">
+                {/* Posts/Reels Toggle */}
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-semibold text-foreground">
+                    {showReels ? 'Reels' : 'Posts'}
+                  </h3>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowReels(!showReels)}
+                    className="text-xs"
+                  >
+                    Switch to {showReels ? 'Posts' : 'Reels'}
+                  </Button>
+                </div>
+
+                {/* Grid of Posts/Reels */}
+                <div className="grid grid-cols-3 gap-1">
+                  {[1, 2, 3, 4, 5, 6].map((item) => (
+                    <div
+                      key={item}
+                      className="aspect-square bg-muted rounded-sm flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
+                    >
+                      <span className="text-xs text-muted-foreground">
+                        {showReels ? 'Reel' : 'Post'} {item}
+                      </span>
                     </div>
-                    
-                    <div className="grid grid-cols-3 gap-3">
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {activeSection === 'expand' && (
+              <div className="space-y-3">
+                {!isVerified ? (
+                  <Card>
+                    <CardContent className="py-6 text-center space-y-3">
+                      <div className="w-12 h-12 mx-auto bg-orange-100 rounded-full flex items-center justify-center">
+                        <XCircle className="h-6 w-6 text-orange-600" />
+                      </div>
                       <div>
-                        <p className="text-xs text-muted-foreground mb-1">Invested</p>
-                        <p className="text-sm font-semibold text-foreground">
-                          {formatCurrency(totalInvested)}
+                        <h3 className="text-base font-semibold text-foreground mb-1">
+                          Portfolio Not Visible
+                        </h3>
+                        <p className="text-xs text-muted-foreground">
+                          Verify your account to showcase your portfolio to others
                         </p>
                       </div>
-                      <div>
-                        <p className="text-xs text-muted-foreground mb-1">Return</p>
-                        <div className="flex items-center gap-1">
-                          {totalReturn >= 0 ? (
-                            <ArrowUpRight className="h-3 w-3 text-green-600" />
-                          ) : (
-                            <ArrowDownRight className="h-3 w-3 text-red-600" />
-                          )}
-                          <p className={`text-sm font-semibold ${totalReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                            {formatCurrency(Math.abs(totalReturn))}
-                          </p>
-                        </div>
-                      </div>
-                      <div>
-                        <p className="text-xs text-muted-foreground mb-1">%</p>
-                        <div className="flex items-center gap-1">
-                          {parseFloat(totalReturnPercentage) >= 0 ? (
-                            <TrendingUp className="h-3 w-3 text-green-600" />
-                          ) : (
-                            <TrendingDown className="h-3 w-3 text-red-600" />
-                          )}
-                          <p className={`text-sm font-semibold ${parseFloat(totalReturnPercentage) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                            {totalReturnPercentage}%
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <>
+                    {/* About Section */}
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm">About</CardTitle>
+                      </CardHeader>
+                      <CardContent className="pt-2">
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                          {investorData.bio}
+                        </p>
+                      </CardContent>
+                    </Card>
 
-                {/* Active Investments */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-xs font-semibold text-foreground">
-                      Active Investments ({investments.length})
-                    </h3>
-                    <Badge variant="outline" className="text-xs h-5">
-                      <Activity className="h-3 w-3 mr-1" />
-                      Live
-                    </Badge>
-                  </div>
-
-                  {investments.map((investment) => (
-                    <Card key={investment.id} className="hover:border-primary/50 transition-colors cursor-pointer">
-                      <CardContent className="p-3">
-                        <div className="flex items-start justify-between mb-2">
-                          <div className="flex items-center gap-2">
-                            <Avatar className="h-10 w-10 border">
-                              <AvatarImage src={investment.companyLogo} alt={investment.companyName} />
-                              <AvatarFallback>{investment.companyName[0]}</AvatarFallback>
-                            </Avatar>
-                            <div>
-                              <h4 className="font-semibold text-foreground text-xs">
-                                {investment.companyName}
-                              </h4>
-                              <p className="text-xs text-muted-foreground">{investment.sector}</p>
+                    {/* Portfolio Summary */}
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm flex items-center gap-2">
+                          <Wallet className="h-4 w-4 text-primary" />
+                          Portfolio Summary
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-3 pt-2">
+                        <div>
+                          <p className="text-xs text-muted-foreground mb-1">Total Portfolio Value</p>
+                          <h2 className="text-xl font-bold text-foreground">
+                            {formatCurrency(currentPortfolioValue)}
+                          </h2>
+                        </div>
+                        
+                        <div className="grid grid-cols-3 gap-3">
+                          <div>
+                            <p className="text-xs text-muted-foreground mb-1">Invested</p>
+                            <p className="text-sm font-semibold text-foreground">
+                              {formatCurrency(totalInvested)}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground mb-1">Return</p>
+                            <div className="flex items-center gap-1">
+                              {totalReturn >= 0 ? (
+                                <ArrowUpRight className="h-3 w-3 text-green-600" />
+                              ) : (
+                                <ArrowDownRight className="h-3 w-3 text-red-600" />
+                              )}
+                              <p className={`text-sm font-semibold ${totalReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                {formatCurrency(Math.abs(totalReturn))}
+                              </p>
                             </div>
                           </div>
-                          <Badge 
-                            variant={investment.returnPercentage >= 0 ? "default" : "destructive"}
-                            className="text-xs h-5"
-                          >
-                            {investment.returnPercentage >= 0 ? '+' : ''}
-                            {investment.returnPercentage.toFixed(1)}%
-                          </Badge>
-                        </div>
-
-                        <div className="grid grid-cols-3 gap-2 text-xs">
                           <div>
-                            <p className="text-muted-foreground mb-0.5 text-xs">Invested</p>
-                            <p className="font-semibold text-foreground text-xs">
-                              {formatCurrency(investment.investmentAmount)}
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-muted-foreground mb-0.5 text-xs">Current</p>
-                            <p className="font-semibold text-foreground text-xs">
-                              {formatCurrency(investment.currentValue)}
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-muted-foreground mb-0.5 text-xs">Shares</p>
-                            <p className="font-semibold text-foreground text-xs">
-                              {investment.shares.toLocaleString()}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="mt-2 pt-2 border-t flex items-center justify-between">
-                          <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                            <Calendar className="h-3 w-3" />
-                            {formatDate(investment.investmentDate)}
-                          </div>
-                          <div className="flex items-center gap-1">
-                            {investment.currentValue > investment.investmentAmount ? (
-                              <ArrowUpRight className="h-3 w-3 text-green-600" />
-                            ) : (
-                              <ArrowDownRight className="h-3 w-3 text-red-600" />
-                            )}
-                            <span className={`text-xs font-semibold ${
-                              investment.currentValue > investment.investmentAmount 
-                                ? 'text-green-600' 
-                                : 'text-red-600'
-                            }`}>
-                              {formatCurrency(Math.abs(investment.currentValue - investment.investmentAmount))}
-                            </span>
+                            <p className="text-xs text-muted-foreground mb-1">%</p>
+                            <div className="flex items-center gap-1">
+                              {parseFloat(totalReturnPercentage) >= 0 ? (
+                                <TrendingUp className="h-3 w-3 text-green-600" />
+                              ) : (
+                                <TrendingDown className="h-3 w-3 text-red-600" />
+                              )}
+                              <p className={`text-sm font-semibold ${parseFloat(totalReturnPercentage) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                {totalReturnPercentage}%
+                              </p>
+                            </div>
                           </div>
                         </div>
                       </CardContent>
                     </Card>
-                  ))}
-                </div>
-              </TabsContent>
 
-              {/* Criteria Tab */}
-              <TabsContent value="criteria" className="space-y-3 px-4">
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm flex items-center gap-2">
-                      <Target className="h-4 w-4 text-primary" />
-                      Investment Criteria
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3 pt-2">
-                    <div>
-                      <p className="text-xs font-medium text-foreground mb-2">
-                        Preferred Industries
-                      </p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {["AI & ML", "SaaS", "FinTech", "HealthTech"].map(tag => (
-                          <span 
-                            key={tag}
-                            className="px-2.5 py-1 bg-primary/10 text-primary text-xs rounded-md font-medium"
-                          >
-                            {tag}
-                          </span>
-                        ))}
+                    {/* Active Investments */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-xs font-semibold text-foreground">
+                          Active Investments ({investments.length})
+                        </h3>
+                        <Badge variant="outline" className="text-xs h-5">
+                          <Activity className="h-3 w-3 mr-1" />
+                          Live
+                        </Badge>
                       </div>
-                    </div>
-                    
-                    <div className="pt-1">
-                      <p className="text-xs font-medium text-foreground mb-1">Stage Preference</p>
-                      <p className="text-xs text-muted-foreground">Pre-seed, Seed, Series A</p>
+
+                      {investments.map((investment) => (
+                        <Card key={investment.id} className="hover:border-primary/50 transition-colors cursor-pointer">
+                          <CardContent className="p-3">
+                            <div className="flex items-start justify-between mb-2">
+                              <div className="flex items-center gap-2">
+                                <Avatar className="h-10 w-10 border">
+                                  <AvatarImage src={investment.companyLogo} alt={investment.companyName} />
+                                  <AvatarFallback>{investment.companyName[0]}</AvatarFallback>
+                                </Avatar>
+                                <div>
+                                  <h4 className="font-semibold text-foreground text-xs">
+                                    {investment.companyName}
+                                  </h4>
+                                  <p className="text-xs text-muted-foreground">{investment.sector}</p>
+                                </div>
+                              </div>
+                              <Badge 
+                                variant={investment.returnPercentage >= 0 ? "default" : "destructive"}
+                                className="text-xs h-5"
+                              >
+                                {investment.returnPercentage >= 0 ? '+' : ''}
+                                {investment.returnPercentage.toFixed(1)}%
+                              </Badge>
+                            </div>
+
+                            <div className="grid grid-cols-3 gap-2 text-xs">
+                              <div>
+                                <p className="text-muted-foreground mb-0.5 text-xs">Invested</p>
+                                <p className="font-semibold text-foreground text-xs">
+                                  {formatCurrency(investment.investmentAmount)}
+                                </p>
+                              </div>
+                              <div>
+                                <p className="text-muted-foreground mb-0.5 text-xs">Current</p>
+                                <p className="font-semibold text-foreground text-xs">
+                                  {formatCurrency(investment.currentValue)}
+                                </p>
+                              </div>
+                              <div>
+                                <p className="text-muted-foreground mb-0.5 text-xs">Shares</p>
+                                <p className="font-semibold text-foreground text-xs">
+                                  {investment.shares.toLocaleString()}
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="mt-2 pt-2 border-t flex items-center justify-between">
+                              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                <Calendar className="h-3 w-3" />
+                                {formatDate(investment.investmentDate)}
+                              </div>
+                              <div className="flex items-center gap-1">
+                                {investment.currentValue > investment.investmentAmount ? (
+                                  <ArrowUpRight className="h-3 w-3 text-green-600" />
+                                ) : (
+                                  <ArrowDownRight className="h-3 w-3 text-red-600" />
+                                )}
+                                <span className={`text-xs font-semibold ${
+                                  investment.currentValue > investment.investmentAmount 
+                                    ? 'text-green-600' 
+                                    : 'text-red-600'
+                                }`}>
+                                  {formatCurrency(Math.abs(investment.currentValue - investment.investmentAmount))}
+                                </span>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
                     </div>
 
-                    <div className="pt-1">
-                      <p className="text-xs font-medium text-foreground mb-1">Geographic Focus</p>
-                      <p className="text-xs text-muted-foreground">North America, Europe</p>
-                    </div>
-                  </CardContent>
-                </Card>
+                    {/* Investment Criteria */}
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm flex items-center gap-2">
+                          <Target className="h-4 w-4 text-primary" />
+                          Investment Criteria
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-3 pt-2">
+                        <div>
+                          <p className="text-xs font-medium text-foreground mb-2">
+                            Preferred Industries
+                          </p>
+                          <div className="flex flex-wrap gap-1.5">
+                            {["AI & ML", "SaaS", "FinTech", "HealthTech"].map(tag => (
+                              <span 
+                                key={tag}
+                                className="px-2.5 py-1 bg-primary/10 text-primary text-xs rounded-md font-medium"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                        
+                        <div className="pt-1">
+                          <p className="text-xs font-medium text-foreground mb-1">Stage Preference</p>
+                          <p className="text-xs text-muted-foreground">Pre-seed, Seed, Series A</p>
+                        </div>
 
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm flex items-center gap-2">
-                      <DollarSign className="h-4 w-4 text-primary" />
-                      Investment Range
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-2 pt-2">
-                    <div className="flex justify-between items-center py-1.5">
-                      <span className="text-xs text-muted-foreground">Typical Check Size</span>
-                      <span className="text-xs font-semibold text-foreground">$50K - $500K</span>
-                    </div>
-                    <div className="flex justify-between items-center py-1.5 border-t">
-                      <span className="text-xs text-muted-foreground">Sweet Spot</span>
-                      <span className="text-xs font-semibold text-foreground">$150K - $250K</span>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              </Tabs>
+                        <div className="pt-1">
+                          <p className="text-xs font-medium text-foreground mb-1">Geographic Focus</p>
+                          <p className="text-xs text-muted-foreground">North America, Europe</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Investment Range */}
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm flex items-center gap-2">
+                          <DollarSign className="h-4 w-4 text-primary" />
+                          Investment Range
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-2 pt-2">
+                        <div className="flex justify-between items-center py-1.5">
+                          <span className="text-xs text-muted-foreground">Typical Check Size</span>
+                          <span className="text-xs font-semibold text-foreground">$50K - $500K</span>
+                        </div>
+                        <div className="flex justify-between items-center py-1.5 border-t">
+                          <span className="text-xs text-muted-foreground">Sweet Spot</span>
+                          <span className="text-xs font-semibold text-foreground">$150K - $250K</span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </>
+                )}
+              </div>
+            )}
+
+            {activeSection === 'trades' && (
+              <div className="space-y-3">
+                <h3 className="text-sm font-semibold text-foreground mb-3">
+                  Active Sales
+                </h3>
+                
+                {/* Mock Trade Items */}
+                {[
+                  {
+                    company: "Airbound.co",
+                    logo: "https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=100&h=100&fit=crop",
+                    shares: 1000,
+                    price: 57,
+                    totalValue: 57000
+                  },
+                  {
+                    company: "NeuralHealth",
+                    logo: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=100&h=100&fit=crop",
+                    shares: 500,
+                    price: 65,
+                    totalValue: 32500
+                  }
+                ].map((trade, index) => (
+                  <Card key={index} className="hover:border-primary/50 transition-colors cursor-pointer">
+                    <CardContent className="p-3">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <Avatar className="h-10 w-10 border">
+                            <AvatarImage src={trade.logo} alt={trade.company} />
+                            <AvatarFallback>{trade.company[0]}</AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <h4 className="font-semibold text-foreground text-sm">
+                              {trade.company}
+                            </h4>
+                            <p className="text-xs text-muted-foreground">
+                              {trade.shares.toLocaleString()} shares
+                            </p>
+                          </div>
+                        </div>
+                        <Badge className="text-xs">For Sale</Badge>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3 text-xs">
+                        <div>
+                          <p className="text-muted-foreground mb-0.5">Price per Share</p>
+                          <p className="font-semibold text-foreground">
+                            {formatCurrency(trade.price)}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground mb-0.5">Total Value</p>
+                          <p className="font-semibold text-foreground">
+                            {formatCurrency(trade.totalValue)}
+                          </p>
+                        </div>
+                      </div>
+
+                      <Button className="w-full mt-3" size="sm">
+                        View Details
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             )}
           </div>
         </div>
