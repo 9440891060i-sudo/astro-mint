@@ -86,8 +86,8 @@ const BottomNav = () => {
 
   return (
     <>
-      {/* Mobile bottom nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-lg border-t border-border/50 z-50 shadow-lg">
+      {/* Mobile and iPad bottom nav */}
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-lg border-t border-border/50 z-50 shadow-lg">
         <div className="max-w-2xl mx-auto flex items-center justify-around h-16 px-2">
           {/* First two tabs */}
           {tabs.slice(0, 2).map((tab) => {
@@ -162,8 +162,8 @@ const BottomNav = () => {
         </div>
       </nav>
 
-      {/* iPad/Desktop left sidebar */}
-      <nav className="hidden md:flex fixed left-0 top-0 bottom-0 w-20 bg-background/80 backdrop-blur-lg z-50">
+      {/* Desktop left sidebar */}
+      <nav className="hidden lg:flex fixed left-0 top-0 bottom-0 w-20 bg-background/80 backdrop-blur-lg z-50">
         <div className="flex flex-col items-center justify-center gap-6 w-full py-4">
           {/* First 2 tabs */}
           {sidebarTabs.slice(0, 2).map((tab) => {
