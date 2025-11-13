@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 type FilterDay = "today" | "yesterday";
 
@@ -22,6 +21,7 @@ const Launch = () => {
   const [timeRemaining, setTimeRemaining] = useState({ hours: 2, minutes: 30, seconds: 45 });
   const [startupTypeFilters, setStartupTypeFilters] = useState<string[]>([]);
   const [startupIndustryFilters, setStartupIndustryFilters] = useState<string[]>([]);
+  const [showFilters, setShowFilters] = useState<boolean>(false);
 
   useEffect(() => {
     if (filterDay === "today") {
@@ -166,72 +166,84 @@ const Launch = () => {
                   {filterDay === "today" ? "Today" : "Yesterday"}
                   <ChevronDown className="w-4 h-4" />
                 </button>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <Filter className="w-5 h-5" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-80">
-                    <div className="space-y-4">
-                      <h4 className="font-semibold">Filters</h4>
-                      
-                      <div className="space-y-2">
-                        <Label className="text-sm font-medium">Type</Label>
-                        <div className="flex flex-wrap gap-2">
-                          {startupTypes.map(type => (
-                            <button
-                              key={type}
-                              onClick={() => toggleStartupType(type)}
-                              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                                startupTypeFilters.includes(type)
-                                  ? "bg-primary text-primary-foreground"
-                                  : "bg-muted text-foreground hover:bg-muted/80"
-                              }`}
-                            >
-                              {type}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label className="text-sm font-medium">Main Filters</Label>
-                        <ScrollArea className="h-32">
-                          <div className="flex flex-wrap gap-2">
-                            {startupMainFilters.map(industry => (
-                              <button
-                                key={industry}
-                                onClick={() => toggleStartupIndustry(industry)}
-                                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                                  startupIndustryFilters.includes(industry)
-                                    ? "bg-primary text-primary-foreground"
-                                    : "bg-muted text-foreground hover:bg-muted/80"
-                                }`}
-                              >
-                                {industry}
-                              </button>
-                            ))}
-                          </div>
-                        </ScrollArea>
-                      </div>
-
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="w-full"
-                        onClick={() => {
-                          setStartupTypeFilters([]);
-                          setStartupIndustryFilters([]);
-                        }}
-                      >
-                        Clear Filters
-                      </Button>
-                    </div>
-                  </PopoverContent>
-                </Popover>
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  onClick={() => setShowFilters(!showFilters)}
+                >
+                  <Filter className="w-5 h-5" />
+                </Button>
               </div>
             </div>
+
+            {/* Filters Box - Expands and pushes content down */}
+            {showFilters && (
+              <div className="bg-gradient-to-br from-muted/30 to-muted/20 border border-border/50 rounded-2xl p-5 shadow-sm animate-fade-in space-y-4">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-semibold text-base">Filters</h4>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => setShowFilters(false)}
+                    className="h-8"
+                  >
+                    Close
+                  </Button>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Type</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {startupTypes.map(type => (
+                      <button
+                        key={type}
+                        onClick={() => toggleStartupType(type)}
+                        className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                          startupTypeFilters.includes(type)
+                            ? "bg-primary text-primary-foreground shadow-sm"
+                            : "bg-background/50 text-foreground hover:bg-background border border-border/40"
+                        }`}
+                      >
+                        {type}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Industries</Label>
+                  <ScrollArea className="h-40">
+                    <div className="flex flex-wrap gap-2 pr-4">
+                      {startupMainFilters.map(industry => (
+                        <button
+                          key={industry}
+                          onClick={() => toggleStartupIndustry(industry)}
+                          className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                            startupIndustryFilters.includes(industry)
+                              ? "bg-primary text-primary-foreground shadow-sm"
+                              : "bg-background/50 text-foreground hover:bg-background border border-border/40"
+                          }`}
+                        >
+                          {industry}
+                        </button>
+                      ))}
+                    </div>
+                  </ScrollArea>
+                </div>
+
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full"
+                  onClick={() => {
+                    setStartupTypeFilters([]);
+                    setStartupIndustryFilters([]);
+                  }}
+                >
+                  Clear All Filters
+                </Button>
+              </div>
+            )}
 
             {filterDay === "today" ? (
               <div className="bg-card border rounded-lg p-6 shadow-sm">
