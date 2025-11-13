@@ -444,7 +444,7 @@ const Trade = () => {
       
       <main className="pt-14 max-w-2xl mx-auto">
         {/* Compact Buy/Sell Buttons at Top */}
-        <div className={`fixed top-14 left-0 right-0 z-40 flex items-center justify-between gap-3 px-4 py-3 bg-background/95 backdrop-blur-sm max-w-2xl mx-auto transition-transform duration-300 ${isHeaderVisible ? 'translate-y-0' : '-translate-y-full'}`}>
+        <div className="flex items-center justify-between gap-3 px-4 py-3 bg-background">
           <Button 
             size="sm" 
             variant="outline"
@@ -471,7 +471,7 @@ const Trade = () => {
           </Button>
         </div>
 
-        <div className="pt-[52px]">
+        <div>
           {activeView === 'sell' ? (
           /* Selling Page - Portfolio View */
           <div className="px-4 py-6">
