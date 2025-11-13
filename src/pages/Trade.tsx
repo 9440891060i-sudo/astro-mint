@@ -346,7 +346,28 @@ const Trade = () => {
   const [savedSellers, setSavedSellers] = useState<number[]>([1, 3, 5]);
   const [savedScanAds, setSavedScanAds] = useState<number[]>([1, 4]);
   const [showSavedOnly, setShowSavedOnly] = useState(false);
+  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const [expandedInfoId, setExpandedInfoId] = useState<number | null>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      if (currentScrollY < lastScrollY) {
+        // Scrolling up
+        setIsHeaderVisible(true);
+      } else if (currentScrollY > lastScrollY && currentScrollY > 50) {
+        // Scrolling down and past 50px
+        setIsHeaderVisible(false);
+      }
+      
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
 
   const handleToggleSaveScanAd = (adId: number) => {
     setSavedScanAds(prev => 
@@ -423,7 +444,7 @@ const Trade = () => {
       
       <main className="pt-14 max-w-2xl mx-auto">
         {/* Compact Buy/Sell Buttons at Top */}
-        <div className="flex items-center justify-between gap-3 px-4 py-3 bg-background">
+        <div className={`fixed top-14 left-0 right-0 z-40 flex items-center justify-between gap-3 px-4 py-3 bg-background/95 backdrop-blur-sm max-w-2xl mx-auto transition-transform duration-300 ${isHeaderVisible ? 'translate-y-0' : '-translate-y-full'}`}>
           <Button 
             size="sm" 
             variant="outline"
@@ -450,7 +471,7 @@ const Trade = () => {
           </Button>
         </div>
 
-        <div>
+        <div className="pt-[52px]">
           {activeView === 'sell' ? (
           /* Selling Page - Portfolio View */
           <div className="px-4 py-6">
