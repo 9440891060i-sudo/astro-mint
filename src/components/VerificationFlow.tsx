@@ -2,8 +2,9 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Card } from "@/components/ui/card";
-import { CheckCircle2, FileText, Camera, User } from "lucide-react";
+import { CheckCircle2, FileText, Camera, User, Upload, Clock } from "lucide-react";
 import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
 
 interface VerificationFlowProps {
   type: "kyc" | "portfolio" | "company";
@@ -12,8 +13,89 @@ interface VerificationFlowProps {
 
 export const VerificationFlow = ({ type, onComplete }: VerificationFlowProps) => {
   const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 3;
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const totalSteps = type === "portfolio" ? 1 : 3;
 
+  // Portfolio verification - single step
+  if (type === "portfolio") {
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (e.target.files) {
+        setSelectedFiles(Array.from(e.target.files));
+      }
+    };
+
+    const handleSubmit = () => {
+      toast.success("Documents submitted for verification");
+      onComplete();
+    };
+
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="w-full max-w-md p-8 space-y-8 bg-card border-border">
+          {/* Icon */}
+          <div className="flex justify-center">
+            <div className="w-32 h-32 rounded-2xl border-2 border-border bg-muted/30 flex items-center justify-center">
+              <Upload className="h-16 w-16 text-foreground" strokeWidth={1.5} />
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="text-center space-y-4">
+            <h2 className="text-2xl font-bold text-foreground">Portfolio Verification</h2>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Upload your investment documents to verify your portfolio
+            </p>
+          </div>
+
+          {/* File Upload */}
+          <div className="space-y-4">
+            <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-foreground/50 transition-colors cursor-pointer">
+              <Input
+                type="file"
+                multiple
+                accept=".pdf,.jpg,.jpeg,.png"
+                onChange={handleFileChange}
+                className="hidden"
+                id="portfolio-upload"
+              />
+              <label htmlFor="portfolio-upload" className="cursor-pointer">
+                <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+                <p className="text-sm font-medium text-foreground">
+                  {selectedFiles.length > 0 
+                    ? `${selectedFiles.length} document(s) selected` 
+                    : "Choose investment documents"}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  PDF, JPG, or PNG
+                </p>
+              </label>
+            </div>
+
+            {/* Verification Time Notice */}
+            <div className="flex items-start gap-3 p-4 bg-muted/50 rounded-lg border border-border">
+              <Clock className="h-5 w-5 text-foreground flex-shrink-0 mt-0.5" />
+              <div className="text-left">
+                <p className="text-sm font-medium text-foreground">Manual Verification</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Documents will be verified within 6 hours
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Submit Button */}
+          <Button 
+            onClick={handleSubmit}
+            className="w-full h-12 text-base font-medium bg-foreground text-background hover:bg-foreground/90"
+          >
+            Submit for Verification
+          </Button>
+        </Card>
+      </div>
+    );
+  }
+
+  // KYC and Company verification - multi-step
   const getStepContent = () => {
     if (type === "kyc") {
       switch (currentStep) {
@@ -43,15 +125,13 @@ export const VerificationFlow = ({ type, onComplete }: VerificationFlowProps) =>
           return null;
       }
     } else {
-      // Portfolio or Company verification
+      // Company verification
       switch (currentStep) {
         case 1:
           return {
             icon: FileText,
-            title: type === "portfolio" ? "Portfolio Verification" : "Company Verification",
-            description: type === "portfolio" 
-              ? "Please prepare documents showing your investment history"
-              : "Please prepare your company incorporation documents",
+            title: "Company Verification",
+            description: "Please prepare your company incorporation documents",
             buttonText: "Choose document",
             note: "This verification helps establish credibility"
           };
@@ -59,9 +139,7 @@ export const VerificationFlow = ({ type, onComplete }: VerificationFlowProps) =>
           return {
             icon: FileText,
             title: "Additional Documents",
-            description: type === "portfolio"
-              ? "Upload proof of previous investments or portfolio statements"
-              : "Upload additional company documents or funding proof",
+            description: "Upload additional company documents or funding proof",
             buttonText: "Upload Documents"
           };
         case 3:
