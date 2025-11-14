@@ -15,24 +15,23 @@ const BottomNav = () => {
   const isNotificationsPage = location.pathname === '/notifications';
   const isMessagesPage = location.pathname === '/messages';
   
-  // Determine mode based on current page
+  // Define page groups
   const leftModePages = ["/", "/search", "/reels", "/profile"];
   const rightModePages = ["/launch", "/trade", "/opportunities", "/meetings"];
-  const neutralPages = ["/notifications", "/messages"]; // Pages that don't affect mode
   
-  // Initialize with current page if it matches a mode, otherwise use defaults
+  // Mode state - only changes via toggle button
+  const [appMode, setAppMode] = useState<AppMode>(() => {
+    // Initialize based on current page
+    return rightModePages.includes(location.pathname) ? "right" : "left";
+  });
+  
+  // Track last visited page for each mode
   const [lastLeftPage, setLastLeftPage] = useState(() => {
     return leftModePages.includes(location.pathname) ? location.pathname : "/";
   });
   const [lastRightPage, setLastRightPage] = useState(() => {
     return rightModePages.includes(location.pathname) ? location.pathname : "/launch";
   });
-
-  // If on a neutral page, maintain last known mode based on previous navigation
-  const appMode: AppMode = 
-    neutralPages.includes(location.pathname)
-      ? (rightModePages.includes(lastRightPage) ? "right" : "left")
-      : rightModePages.includes(location.pathname) ? "right" : "left";
 
   // Track the last visited page for each mode
   useEffect(() => {
@@ -84,10 +83,12 @@ const BottomNav = () => {
   };
 
   const toggleMode = () => {
-    // Navigate to the last visited page of the other mode
+    // Toggle mode and navigate to the last visited page of the other mode
     if (appMode === "left") {
+      setAppMode("right");
       navigate(lastRightPage);
     } else {
+      setAppMode("left");
       navigate(lastLeftPage);
     }
   };
