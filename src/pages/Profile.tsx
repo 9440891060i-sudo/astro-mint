@@ -142,9 +142,7 @@ const Profile = () => {
       {/* Instagram-style Header */}
       <header className="fixed top-0 left-0 right-0 bg-background/95 backdrop-blur-md z-50">
         <div className="max-w-2xl mx-auto flex items-center justify-between px-4 h-14">
-          <button className="p-2 hover:bg-muted/80 rounded-lg transition-colors">
-            <Menu className="h-5 w-5 text-foreground" />
-          </button>
+          <div className="w-10"></div>
           
           <h2 className="font-semibold text-base text-foreground flex items-center gap-1.5">
             {investorData.username.replace('@', '')}
