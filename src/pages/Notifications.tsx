@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft, Heart, UserPlus, MessageCircle, Share2, TrendingUp, Calendar, Award, Bell } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import BottomNav from "@/components/BottomNav";
 
 interface Notification {
   id: number;
@@ -237,6 +238,7 @@ const Notifications = () => {
           </div>
         )}
       </main>
+      <BottomNav />
     </div>
   );
 };
