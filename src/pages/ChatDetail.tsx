@@ -233,28 +233,21 @@ const ChatDetail = () => {
                   showSenderInfo ? "mt-4" : ""
                 }`}
               >
-                <div className={`flex items-end gap-2 max-w-[75%] ${message.sender === "me" ? "flex-row-reverse" : ""}`}>
+                <div className={`flex items-end gap-2.5 max-w-[75%] ${message.sender === "me" ? "flex-row-reverse" : ""}`}>
                   {/* Avatar for group chats */}
                   {isGroupChat && message.sender === "them" && showSenderInfo && (
-                    <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center flex-shrink-0 mb-1">
-                      <span className="text-[9px] font-medium text-muted-foreground">
+                    <div className="w-9 h-9 rounded-full bg-muted flex items-center justify-center flex-shrink-0 mb-1">
+                      <span className="text-xs font-medium text-muted-foreground">
                         {message.senderAvatar}
                       </span>
                     </div>
                   )}
                   {isGroupChat && message.sender === "them" && !showSenderInfo && (
-                    <div className="w-6" />
+                    <div className="w-9" />
                   )}
 
                   <div className="flex flex-col">
-                    {/* Sender name for group chats */}
-                    {showSenderInfo && (
-                      <span className="text-[10px] text-muted-foreground font-medium mb-1 px-3">
-                        {message.senderName}
-                      </span>
-                    )}
-
-                    {/* Message bubble */}
+                    {/* Message bubble with timestamp inside */}
                     <div
                       className={`rounded-[18px] px-4 py-2.5 ${
                         message.sender === "me"
@@ -269,15 +262,17 @@ const ChatDetail = () => {
                           className="rounded-xl mb-2 max-w-full"
                         />
                       )}
-                      {message.text && (
-                        <p className="text-[15px] leading-[1.4]">{message.text}</p>
-                      )}
+                      <div className="flex items-end justify-between gap-3">
+                        {message.text && (
+                          <p className="text-[15px] leading-[1.4] flex-1">{message.text}</p>
+                        )}
+                        <span className={`text-[10px] leading-none flex-shrink-0 self-end ${
+                          message.sender === "me" ? "text-white/70" : "text-black/50"
+                        }`}>
+                          {message.timestamp}
+                        </span>
+                      </div>
                     </div>
-
-                    {/* Timestamp */}
-                    <span className="text-[11px] text-muted-foreground mt-1 px-3">
-                      {message.timestamp}
-                    </span>
                   </div>
                 </div>
               </div>
