@@ -151,9 +151,7 @@ const Profile = () => {
             <CheckCircle2 className="h-4 w-4 text-blue-500 flex-shrink-0" />
           </h2>
           
-          <button className="p-2 hover:bg-muted/80 rounded-lg transition-colors">
-            <Plus className="h-5 w-5 text-foreground" />
-          </button>
+          <div className="w-10"></div>
         </div>
       </header>
       
