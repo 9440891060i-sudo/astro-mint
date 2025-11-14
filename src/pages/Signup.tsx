@@ -2,157 +2,348 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
+import { Progress } from "@/components/ui/progress";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
+import { Loader2 } from "lucide-react";
+
+type SignupStep = "email" | "username" | "code" | "password";
 
 const Signup = () => {
   const navigate = useNavigate();
+  const [step, setStep] = useState<SignupStep>("email");
+  const [loading, setLoading] = useState(false);
+  
+  // Form data
   const [email, setEmail] = useState("");
-  const [fullName, setFullName] = useState("");
   const [username, setUsername] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [code, setCode] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleSignup = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Store basic info and navigate to role selection
+  const progress = {
+    email: 25,
+    username: 50,
+    code: 75,
+    password: 100,
+  };
+
+  const handleEmailNext = async () => {
+    if (!email || !fullName) {
+      toast({
+        title: "Missing Information",
+        description: "Please enter your email and full name",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address",
+        variant: "destructive",
+      });
+      return;
+    }
+
     localStorage.setItem("signupEmail", email);
-    localStorage.setItem("signupName", fullName);
+    localStorage.setItem("signupFullName", fullName);
+    setStep("username");
+  };
+
+  const handleUsernameNext = async () => {
+    if (!username) {
+      toast({
+        title: "Missing Username",
+        description: "Please enter a username",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (username.length < 3) {
+      toast({
+        title: "Invalid Username",
+        description: "Username must be at least 3 characters",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
+    
+    // Check if username is available
+    const { data: existingUser } = await supabase
+      .from("profiles")
+      .select("username")
+      .eq("username", username)
+      .maybeSingle();
+
+    if (existingUser) {
+      toast({
+        title: "Username Taken",
+        description: "This username is already taken. Please choose another.",
+        variant: "destructive",
+      });
+      setLoading(false);
+      return;
+    }
+
     localStorage.setItem("signupUsername", username);
+    
+    // Send OTP to email
+    const { error } = await supabase.auth.signInWithOtp({
+      email: email,
+      options: {
+        shouldCreateUser: false,
+      },
+    });
+
+    setLoading(false);
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to send verification code. Please try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toast({
+      title: "Code Sent",
+      description: "Check your email for the verification code",
+    });
+
+    setStep("code");
+  };
+
+  const handleCodeNext = () => {
+    if (!code || code.length !== 6) {
+      toast({
+        title: "Invalid Code",
+        description: "Please enter the 6-digit verification code",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    localStorage.setItem("signupCode", code);
+    setStep("password");
+  };
+
+  const handlePasswordNext = async () => {
+    if (!password || !confirmPassword) {
+      toast({
+        title: "Missing Password",
+        description: "Please enter and confirm your password",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (password.length < 6) {
+      toast({
+        title: "Weak Password",
+        description: "Password must be at least 6 characters",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      toast({
+        title: "Passwords Don't Match",
+        description: "Please make sure your passwords match",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
+
+    // Verify OTP and create account
+    const { data: authData, error: verifyError } = await supabase.auth.verifyOtp({
+      email: email,
+      token: code,
+      type: "email",
+    });
+
+    if (verifyError) {
+      toast({
+        title: "Verification Failed",
+        description: "Invalid verification code. Please try again.",
+        variant: "destructive",
+      });
+      setLoading(false);
+      return;
+    }
+
+    // Update user password
+    const { error: passwordError } = await supabase.auth.updateUser({
+      password: password,
+    });
+
+    if (passwordError) {
+      toast({
+        title: "Error",
+        description: "Failed to set password. Please try again.",
+        variant: "destructive",
+      });
+      setLoading(false);
+      return;
+    }
+
+    // Create profile
+    const { error: profileError } = await supabase.from("profiles").insert({
+      id: authData.user?.id,
+      username: username,
+      full_name: fullName,
+      email: email,
+    });
+
+    if (profileError) {
+      console.error("Profile creation error:", profileError);
+      toast({
+        title: "Error",
+        description: "Failed to create profile. Please contact support.",
+        variant: "destructive",
+      });
+      setLoading(false);
+      return;
+    }
+
+    // Store signup data for role selection
+    localStorage.setItem("signupUserId", authData.user?.id || "");
+    localStorage.setItem("signupComplete", "true");
+
+    setLoading(false);
+
+    toast({
+      title: "Success",
+      description: "Account created successfully!",
+    });
+
+    // Navigate to role selection
     navigate("/role-selection");
   };
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="w-full max-w-[350px] space-y-8">
-        {/* Logo */}
-        <div className="text-center space-y-6">
-          <h1 className="text-5xl font-['Pacifico'] text-foreground">
+      <div className="w-full max-w-md space-y-6">
+        <div className="text-center space-y-2">
+          <h1 className="text-4xl font-['Pacifico'] text-foreground mb-2">
             Atmosphere
           </h1>
-        </div>
-
-        {/* Signup Form */}
-        <div className="bg-card border border-border rounded-sm p-10">
-          <p className="text-center text-muted-foreground text-base font-semibold mb-6">
-            Sign up to see photos and videos from your friends.
+          <h2 className="text-2xl font-bold text-foreground">
+            Create Account
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Step {Object.keys(progress).indexOf(step) + 1} of 4
           </p>
-
-          <Button
-            type="button"
-            variant="default"
-            className="w-full h-8 text-sm font-semibold mb-4"
-          >
-            <svg
-              className="w-4 h-4 mr-2"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M9.198 21.5h4v-8.01h3.604l.396-3.98h-4V7.5a1 1 0 0 1 1-1h3v-4h-3a5 5 0 0 0-5 5v2.01h-2l-.396 3.98h2.396v8.01Z" />
-            </svg>
-            Log in with Facebook
-          </Button>
-
-          <div className="flex items-center gap-4 my-5">
-            <Separator className="flex-1" />
-            <span className="text-xs font-semibold text-muted-foreground uppercase">
-              Or
-            </span>
-            <Separator className="flex-1" />
-          </div>
-
-          <form onSubmit={handleSignup} className="space-y-2">
-            <Input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="h-9 text-xs bg-background border-border/50"
-              required
-            />
-            <Input
-              type="text"
-              placeholder="Full Name"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              className="h-9 text-xs bg-background border-border/50"
-              required
-            />
-            <Input
-              type="text"
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="h-9 text-xs bg-background border-border/50"
-              required
-            />
-            <Input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="h-9 text-xs bg-background border-border/50"
-              required
-            />
-
-            <p className="text-xs text-center text-muted-foreground pt-2 pb-2">
-              People who use our service may have uploaded your contact information to Atmosphere.{" "}
-              <button type="button" className="text-foreground font-semibold">
-                Learn More
-              </button>
-            </p>
-
-            <p className="text-xs text-center text-muted-foreground pb-2">
-              By signing up, you agree to our{" "}
-              <button type="button" className="text-foreground font-semibold">
-                Terms
-              </button>
-              ,{" "}
-              <button type="button" className="text-foreground font-semibold">
-                Privacy Policy
-              </button>{" "}
-              and{" "}
-              <button type="button" className="text-foreground font-semibold">
-                Cookies Policy
-              </button>
-              .
-            </p>
-
-            <Button
-              type="submit"
-              className="w-full h-8 text-sm font-semibold"
-            >
-              Sign up
-            </Button>
-          </form>
         </div>
 
-        {/* Log In */}
-        <div className="bg-card border border-border rounded-sm p-6 text-center">
-          <p className="text-sm text-foreground">
-            Have an account?{" "}
+        <Progress value={progress[step]} className="w-full" />
+
+        <div className="space-y-4">
+          {step === "email" && (
+            <>
+              <div className="space-y-2">
+                <Input
+                  type="email"
+                  placeholder="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full"
+                />
+                <Input
+                  type="text"
+                  placeholder="Full Name"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="w-full"
+                />
+              </div>
+              <Button onClick={handleEmailNext} className="w-full">
+                Next
+              </Button>
+            </>
+          )}
+
+          {step === "username" && (
+            <>
+              <Input
+                type="text"
+                placeholder="Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full"
+              />
+              <Button onClick={handleUsernameNext} className="w-full" disabled={loading}>
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Next"}
+              </Button>
+            </>
+          )}
+
+          {step === "code" && (
+            <>
+              <div className="space-y-2">
+                <p className="text-sm text-muted-foreground text-center">
+                  Enter the 6-digit code sent to {email}
+                </p>
+                <Input
+                  type="text"
+                  placeholder="000000"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  maxLength={6}
+                  className="w-full text-center text-2xl tracking-widest"
+                />
+              </div>
+              <Button onClick={handleCodeNext} className="w-full">
+                Next
+              </Button>
+            </>
+          )}
+
+          {step === "password" && (
+            <>
+              <div className="space-y-2">
+                <Input
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full"
+                />
+                <Input
+                  type="password"
+                  placeholder="Confirm Password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="w-full"
+                />
+              </div>
+              <Button onClick={handlePasswordNext} className="w-full" disabled={loading}>
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Create Account"}
+              </Button>
+            </>
+          )}
+        </div>
+
+        <div className="text-center">
+          <p className="text-sm text-muted-foreground">
+            Already have an account?{" "}
             <button
               onClick={() => navigate("/login")}
-              className="text-primary font-semibold"
+              className="text-primary hover:underline"
             >
               Log in
             </button>
           </p>
-        </div>
-
-        {/* Get the app */}
-        <div className="text-center space-y-4">
-          <p className="text-sm text-foreground">Get the app.</p>
-          <div className="flex gap-2 justify-center">
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Download_on_the_App_Store_Badge.svg/320px-Download_on_the_App_Store_Badge.svg.png"
-              alt="Download on App Store"
-              className="h-10 cursor-pointer"
-            />
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Google_Play_Store_badge_EN.svg/320px-Google_Play_Store_badge_EN.svg.png"
-              alt="Get it on Google Play"
-              className="h-10 cursor-pointer"
-            />
-          </div>
         </div>
       </div>
     </div>

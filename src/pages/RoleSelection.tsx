@@ -8,29 +8,18 @@ const RoleSelection = () => {
   const navigate = useNavigate();
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
 
+  const [showConfirmation, setShowConfirmation] = useState(false);
+
   const handleContinue = () => {
-    const email = localStorage.getItem("signupEmail");
-    const name = localStorage.getItem("signupName");
-    const username = localStorage.getItem("signupUsername");
-
-    // Set user data
-    localStorage.setItem("userId", username || "user");
-    localStorage.setItem("userName", name || "User");
-    localStorage.setItem("userMode", selectedRole || "human");
-
-    // Clean up signup data
-    localStorage.removeItem("signupEmail");
-    localStorage.removeItem("signupName");
-    localStorage.removeItem("signupUsername");
-
-    // Navigate based on role
-    if (selectedRole === "investor") {
-      navigate("/profile");
-    } else if (selectedRole === "startup") {
-      navigate("/startup-profile");
-    } else {
-      navigate("/");
+    if (!selectedRole) {
+      return;
     }
+    setShowConfirmation(true);
+  };
+
+  const handleConfirm = () => {
+    localStorage.setItem("selectedRole", selectedRole || "human");
+    navigate("/verification-start");
   };
 
   const roles = [
@@ -109,25 +98,45 @@ const RoleSelection = () => {
           ))}
         </div>
 
-        <div className="flex flex-col items-center gap-4">
-          <Button
-            onClick={handleContinue}
-            disabled={!selectedRole}
-            size="lg"
-            className="w-full max-w-md"
-          >
-            Continue
-          </Button>
-          <button
-            onClick={() => {
-              setSelectedRole("human");
-              handleContinue();
-            }}
-            className="text-sm text-muted-foreground hover:text-foreground"
-          >
-            Skip for now
-          </button>
-        </div>
+        {!showConfirmation ? (
+          <div className="flex flex-col items-center gap-4">
+            <Button
+              onClick={handleContinue}
+              disabled={!selectedRole}
+              size="lg"
+              className="w-full max-w-md"
+            >
+              Continue
+            </Button>
+          </div>
+        ) : (
+          <Card className="p-6 max-w-md mx-auto border-2 border-primary">
+            <div className="space-y-4 text-center">
+              <h3 className="text-lg font-semibold">Confirm Your Selection</h3>
+              <p className="text-muted-foreground">
+                You selected:{" "}
+                <span className="font-semibold text-foreground">
+                  {roles.find((r) => r.id === selectedRole)?.title}
+                </span>
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Is this correct? This will determine your profile type and available features.
+              </p>
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowConfirmation(false)}
+                  className="flex-1"
+                >
+                  Go Back
+                </Button>
+                <Button onClick={handleConfirm} className="flex-1">
+                  Yes, Continue
+                </Button>
+              </div>
+            </div>
+          </Card>
+        )}
       </div>
     </div>
   );

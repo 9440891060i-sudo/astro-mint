@@ -17,6 +17,11 @@ import Settings from "./pages/Settings";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import RoleSelection from "./pages/RoleSelection";
+import VerificationStart from "./pages/VerificationStart";
+import VerificationKYC from "./pages/VerificationKYC";
+import VerificationStartup from "./pages/VerificationStartup";
+import VerificationInvestor from "./pages/VerificationInvestor";
+import VerificationComplete from "./pages/VerificationComplete";
 import NotFound from "./pages/NotFound";
 import Opportunities from "./pages/Opportunities";
 import Meetings from "./pages/Meetings";
@@ -60,6 +65,11 @@ const App = () => (
           <Route path="/saved/posts" element={<SavedPosts />} />
           <Route path="/saved/company-cards" element={<SavedCompanyCards />} />
           <Route path="/company/:companyId" element={<CompanyProfile />} />
+          <Route path="/verification-start" element={<VerificationStart />} />
+          <Route path="/verification-kyc" element={<VerificationKYC />} />
+          <Route path="/verification-startup" element={<VerificationStartup />} />
+          <Route path="/verification-investor" element={<VerificationInvestor />} />
+          <Route path="/verification-complete" element={<VerificationComplete />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
