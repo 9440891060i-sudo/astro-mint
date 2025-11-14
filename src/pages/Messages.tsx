@@ -1,5 +1,5 @@
 import { User, Plus, ArrowLeft, ChevronDown, Search, X } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,12 +45,6 @@ const Messages = () => {
   const [newGroupName, setNewGroupName] = useState<string>("");
   const [newGroupDescription, setNewGroupDescription] = useState<string>("");
   const [newGroupType, setNewGroupType] = useState<string>("Public");
-  
-  // Save the mode when entering this page
-  useEffect(() => {
-    const currentMode = localStorage.getItem('appMode') || 'left';
-    localStorage.setItem('messagesPreviousMode', currentMode);
-  }, []);
   
   const handleBackClick = () => {
     const previousMode = localStorage.getItem('messagesPreviousMode') || 'left';

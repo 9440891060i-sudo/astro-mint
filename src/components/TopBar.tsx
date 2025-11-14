@@ -59,7 +59,11 @@ const TopBar = () => {
             </button>
           ) : (
             <button 
-              onClick={() => navigate('/notifications')}
+              onClick={() => {
+                const currentMode = localStorage.getItem('navMode') || 'left';
+                localStorage.setItem('notificationsPreviousMode', currentMode);
+                navigate('/notifications');
+              }}
               className="p-2 rounded-lg hover:bg-muted/80 transition-all duration-300 active:scale-95 relative"
             >
               <Heart className="w-5 h-5 text-foreground" strokeWidth={2} />
@@ -79,7 +83,11 @@ const TopBar = () => {
         <div className="flex items-center gap-2 lg:hidden">
           {/* Messages with notification badge */}
           <button 
-            onClick={() => navigate('/messages')}
+            onClick={() => {
+              const currentMode = localStorage.getItem('navMode') || 'left';
+              localStorage.setItem('messagesPreviousMode', currentMode);
+              navigate('/messages');
+            }}
             className="p-2 rounded-lg hover:bg-muted/80 transition-all duration-300 active:scale-95 relative"
           >
             <MessageCircle 

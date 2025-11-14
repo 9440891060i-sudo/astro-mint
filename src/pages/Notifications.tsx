@@ -1,5 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 import { ChevronLeft, Heart, UserPlus, MessageCircle, Share2, TrendingUp, Calendar, Award, Bell } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import BottomNav from "@/components/BottomNav";
@@ -130,12 +129,6 @@ const getNotificationIcon = (type: Notification['type']) => {
 
 const Notifications = () => {
   const navigate = useNavigate();
-  
-  // Save the mode when entering this page
-  useEffect(() => {
-    const currentMode = localStorage.getItem('appMode') || 'left';
-    localStorage.setItem('notificationsPreviousMode', currentMode);
-  }, []);
   
   const handleBackClick = () => {
     const previousMode = localStorage.getItem('notificationsPreviousMode') || 'left';

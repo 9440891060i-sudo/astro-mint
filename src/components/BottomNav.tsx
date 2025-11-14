@@ -81,6 +81,12 @@ const BottomNav = () => {
   const sidebarTabs = appMode === "left" ? leftModeSidebarTabs : rightModeSidebarTabs;
 
   const handleTabClick = (tab: typeof tabs[0]) => {
+    // Save current mode before navigating to notifications or messages
+    if (tab.path === '/notifications') {
+      localStorage.setItem('notificationsPreviousMode', appMode);
+    } else if (tab.path === '/messages') {
+      localStorage.setItem('messagesPreviousMode', appMode);
+    }
     navigate(tab.path);
   };
 
