@@ -61,9 +61,14 @@ const CreatePost = ({ onClose }: CreatePostProps) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-background z-50 flex flex-col">
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+    <>
+      {/* Backdrop for desktop/tablet */}
+      <div className="hidden md:block fixed inset-0 bg-black/50 z-50" onClick={onClose} />
+      
+      {/* Modal container */}
+      <div className="fixed inset-0 md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-full md:max-w-2xl md:h-[90vh] md:rounded-lg bg-background z-50 flex flex-col overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
         <button onClick={step === "share" ? handleBack : onClose} className="p-2">
           {step === "share" ? <ChevronLeft className="h-6 w-6" /> : <X className="h-6 w-6" />}
         </button>
@@ -269,7 +274,8 @@ const CreatePost = ({ onClose }: CreatePostProps) => {
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 };
 
