@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import TopBar from "@/components/TopBar";
 import BottomNav from "@/components/BottomNav";
+import CreatePost from "@/components/CreatePost";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,7 @@ const Profile = () => {
   const userId = localStorage.getItem("userId") || "john";
   const [activeSection, setActiveSection] = useState<'posts' | 'expand' | 'trades'>('posts');
   const [showReels, setShowReels] = useState(false);
+  const [showCreatePost, setShowCreatePost] = useState(false);
 
   // Mock investor data
   const investorData = {
@@ -154,7 +156,10 @@ const Profile = () => {
             <CheckCircle2 className="h-4 w-4 text-blue-500 flex-shrink-0" />
           </h2>
           
-          <button className="p-2 hover:bg-muted/80 rounded-lg transition-colors">
+          <button 
+            onClick={() => setShowCreatePost(true)}
+            className="p-2 hover:bg-muted/80 rounded-lg transition-colors"
+          >
             <Plus className="h-5 w-5 text-foreground" />
           </button>
         </div>
@@ -601,6 +606,10 @@ const Profile = () => {
       </main>
 
       <BottomNav />
+      
+      {showCreatePost && (
+        <CreatePost onClose={() => setShowCreatePost(false)} />
+      )}
     </div>
   );
 };
