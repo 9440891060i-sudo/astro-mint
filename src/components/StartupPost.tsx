@@ -10,13 +10,18 @@ interface StartupPostProps {
     id: string;
     name: string;
     tagline: string;
-    brief: string;
+    description: string;
+    traction: string;
     logo: string;
-    revenueGenerating: boolean;
+    stage: string;
+    age: string;
+    fundingRounds: number;
     fundsRaised: string;
     currentInvestors: string[];
-    lookingToDilute: boolean;
-    dilutionAmount?: string;
+    isRaising: boolean;
+    currentRound?: string;
+    targetAmount?: string;
+    raisedAmount?: string;
     images: string[];
   };
 }
