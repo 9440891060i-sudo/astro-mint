@@ -170,46 +170,86 @@ const StartupPost = ({ company }: StartupPostProps) => {
         </div>
       </div>
 
-      {/* Company Brief */}
+      {/* What's [Company Name] Section */}
       <div className="px-4 pb-3">
-        <p className="text-sm text-foreground/80 leading-relaxed">
+        <h4 className="text-xs font-semibold text-muted-foreground uppercase mb-1.5">
+          WHAT'S {company.name.toUpperCase()}
+        </h4>
+        <p className="text-sm text-foreground/90 leading-relaxed line-clamp-2">
           {company.brief}
         </p>
       </div>
 
-      {/* Company Info - Bottom Section */}
-      <div className="px-4 pb-4 space-y-2.5 pt-1">
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
-            company.revenueGenerating 
-              ? 'bg-success/10 text-success border border-success/20' 
-              : 'bg-muted text-muted-foreground border border-border'
-          }`}>
-            {company.revenueGenerating ? 'Revenue Generating' : 'Pre-Revenue'}
-          </span>
-          {company.lookingToDilute && company.dilutionAmount && (
-            <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-primary/10 text-primary border border-primary/20">
-              Seeking: {company.dilutionAmount}
-            </span>
-          )}
-        </div>
+      {/* Traction Section */}
+      <div className="px-4 pb-3">
+        <h4 className="text-xs font-semibold text-muted-foreground uppercase mb-1.5">TRACTION</h4>
+        <p className="text-sm text-foreground/90">
+          Mvp functional, EOI signed, 1200+ test flights
+        </p>
+      </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <span className="text-xs text-muted-foreground">Funds Raised</span>
-            <p className="font-semibold text-sm mt-0.5">{company.fundsRaised}</p>
+      {/* Three Info Boxes */}
+      <div className="px-4 pb-3">
+        <div className="grid grid-cols-3 gap-2">
+          <div className="px-3 py-2 rounded-lg border border-border bg-card text-center">
+            <p className="text-xs font-medium text-foreground">
+              {company.revenueGenerating ? 'REVENUE' : 'PRE REVENUE'}
+            </p>
           </div>
-          <div>
-            <span className="text-xs text-muted-foreground">Investors</span>
-            <p className="font-semibold text-sm mt-0.5">{company.currentInvestors.length}</p>
+          <div className="px-3 py-2 rounded-lg border border-border bg-card text-center">
+            <p className="text-xs font-medium text-foreground">Age : 1yr</p>
           </div>
-        </div>
-
-        <div>
-          <span className="text-xs text-muted-foreground">Current Investors</span>
-          <p className="text-sm mt-0.5 text-foreground/90">{company.currentInvestors.join(", ")}</p>
+          <div className="px-3 py-2 rounded-lg border border-border bg-card text-center">
+            <p className="text-xs font-medium text-foreground">Funding Rounds : 2</p>
+          </div>
         </div>
       </div>
+
+      {/* Funds Raised and Current Investors */}
+      <div className="px-4 pb-3">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <span className="text-xs text-muted-foreground">Funds raised</span>
+            <p className="font-bold text-base mt-0.5">{company.fundsRaised}</p>
+          </div>
+          <div>
+            <span className="text-xs text-muted-foreground">Current investors</span>
+            <p className="text-sm mt-0.5 text-foreground/90">{company.currentInvestors.join(", ")}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Current Round - Only show if raising */}
+      {company.lookingToDilute && company.dilutionAmount && (
+        <div className="px-4 pb-4">
+          <div className="flex items-baseline gap-2 mb-2">
+            <span className="text-xs text-muted-foreground">Current round :</span>
+            <span className="text-sm font-semibold text-foreground">Series A</span>
+          </div>
+          <div className="relative">
+            <div className="h-8 rounded-full bg-card border border-border overflow-hidden">
+              <div 
+                className="h-full bg-gradient-to-r from-muted to-muted-foreground/20 transition-all"
+                style={{ width: '15%' }}
+              />
+            </div>
+            <div className="flex justify-between items-center mt-1">
+              <span className="text-xs text-muted-foreground">180,000$ Filled.</span>
+              <span className="text-sm font-bold text-foreground">{company.dilutionAmount}</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Not Raising - Simple text */}
+      {!company.lookingToDilute && (
+        <div className="px-4 pb-4">
+          <div className="flex items-baseline gap-2">
+            <span className="text-xs text-muted-foreground">Current round :</span>
+            <span className="text-sm font-medium text-foreground">Not raising</span>
+          </div>
+        </div>
+      )}
     </Card>
   );
 };
