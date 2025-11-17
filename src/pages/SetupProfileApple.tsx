@@ -1,0 +1,184 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { toast } from "@/hooks/use-toast";
+import { Camera } from "lucide-react";
+
+const SetupProfileApple = () => {
+  const navigate = useNavigate();
+  const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
+  const [username, setUsername] = useState(localStorage.getItem("signupUsername") || "");
+  const [fullName, setFullName] = useState("");
+  const [accountType, setAccountType] = useState<"investor" | "startup" | "personal" | null>(null);
+  const [acceptDisclaimer, setAcceptDisclaimer] = useState(false);
+
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfilePhoto(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleNext = () => {
+    if (!fullName) {
+      toast({
+        title: "Missing Information",
+        description: "Please enter your full name",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!accountType) {
+      toast({
+        title: "Select Account Type",
+        description: "Please select an account type",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!acceptDisclaimer) {
+      toast({
+        title: "Accept Disclaimer",
+        description: "Please accept the disclaimer to continue",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    localStorage.setItem("setupProfilePhoto", profilePhoto || "");
+    localStorage.setItem("setupFullName", fullName);
+    localStorage.setItem("setupAccountType", accountType);
+
+    if (accountType === "investor") {
+      navigate("/setup-profile-banana");
+    } else {
+      navigate("/profile");
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-background flex flex-col px-6 py-8">
+      <div className="max-w-md mx-auto w-full space-y-8">
+        <div className="text-center">
+          <h2 className="text-2xl font-semibold text-foreground">Setup Profile</h2>
+          <p className="text-sm text-muted-foreground mt-2">Step 1 of 3</p>
+        </div>
+
+        <div className="space-y-6">
+          <div className="flex flex-col items-center">
+            <Label className="text-sm text-muted-foreground mb-3">Profile Photo</Label>
+            <div className="relative">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoUpload}
+                className="hidden"
+                id="profile-photo"
+              />
+              <label
+                htmlFor="profile-photo"
+                className="w-32 h-32 rounded-full bg-muted flex items-center justify-center cursor-pointer hover:bg-muted/80 transition-colors overflow-hidden"
+              >
+                {profilePhoto ? (
+                  <img src={profilePhoto} alt="Profile" className="w-full h-full object-cover" />
+                ) : (
+                  <Camera className="w-8 h-8 text-muted-foreground" />
+                )}
+              </label>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Username</Label>
+            <Input
+              type="text"
+              value={username}
+              disabled
+              className="bg-muted"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Full Name</Label>
+            <Input
+              type="text"
+              placeholder="Enter your full name"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+            />
+          </div>
+
+          <div className="space-y-3">
+            <Label>Account Type</Label>
+            <div className="space-y-2">
+              <button
+                onClick={() => setAccountType("investor")}
+                className={`w-full p-4 rounded-lg border-2 transition-all ${
+                  accountType === "investor"
+                    ? "border-primary bg-primary/10"
+                    : "border-border hover:border-primary/50"
+                }`}
+              >
+                <p className="font-medium">Investor</p>
+              </button>
+              <button
+                onClick={() => setAccountType("startup")}
+                className={`w-full p-4 rounded-lg border-2 transition-all ${
+                  accountType === "startup"
+                    ? "border-primary bg-primary/10"
+                    : "border-border hover:border-primary/50"
+                }`}
+              >
+                <p className="font-medium">Startup</p>
+              </button>
+              <button
+                onClick={() => setAccountType("personal")}
+                className={`w-full p-4 rounded-lg border-2 transition-all ${
+                  accountType === "personal"
+                    ? "border-primary bg-primary/10"
+                    : "border-border hover:border-primary/50"
+                }`}
+              >
+                <p className="font-medium">Personal Account</p>
+              </button>
+            </div>
+          </div>
+
+          <div className="p-4 bg-muted/50 rounded-lg space-y-3">
+            <p className="text-sm text-muted-foreground">
+              <strong>Important:</strong> You won't be able to change your account type after this step.
+            </p>
+            <div className="flex items-start space-x-2">
+              <Checkbox
+                id="disclaimer"
+                checked={acceptDisclaimer}
+                onCheckedChange={(checked) => setAcceptDisclaimer(checked as boolean)}
+              />
+              <label
+                htmlFor="disclaimer"
+                className="text-sm text-foreground leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                I have read and accept this disclaimer
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <Button onClick={handleNext} className="w-full h-12">
+          Next
+        </Button>
+      </div>
+    </div>
+  );
+};
+
+export default SetupProfileApple;
