@@ -27,12 +27,28 @@ const Profile = () => {
   const navigate = useNavigate();
   const userName = localStorage.getItem("userName") || "John";
   const userId = localStorage.getItem("userId") || "john";
+  const username = localStorage.getItem("signupUsername") || "john";
+  const isNewAccount = localStorage.getItem("newAccount") === "true";
+  const profileSetupComplete = localStorage.getItem("profileSetupComplete") === "true";
+  
   const [activeSection, setActiveSection] = useState<'posts' | 'expand' | 'trades'>('posts');
   const [showReels, setShowReels] = useState(false);
   const [showCreatePost, setShowCreatePost] = useState(false);
 
   // Mock investor data
-  const investorData = {
+  const investorData = isNewAccount && !profileSetupComplete ? {
+    name: "",
+    username: `@${username}`,
+    avatar: "",
+    bio: "",
+    location: "",
+    stats: {
+      followers: 0,
+      following: 0,
+      postsSaved: 0,
+      profileViews: 0
+    }
+  } : {
     name: "John Anderson",
     username: "@johnanderson",
     avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop",
@@ -153,15 +169,19 @@ const Profile = () => {
           
           <h2 className="font-semibold text-base text-foreground flex items-center gap-1.5">
             {investorData.username.replace('@', '')}
-            <CheckCircle2 className="h-4 w-4 text-blue-500 flex-shrink-0" />
+            {(!isNewAccount || profileSetupComplete) && (
+              <CheckCircle2 className="h-4 w-4 text-blue-500 flex-shrink-0" />
+            )}
           </h2>
           
-          <button 
-            onClick={() => setShowCreatePost(true)}
-            className="p-2 hover:bg-muted/80 rounded-lg transition-colors"
-          >
-            <Plus className="h-5 w-5 text-foreground" />
-          </button>
+          {(!isNewAccount || profileSetupComplete) && (
+            <button 
+              onClick={() => setShowCreatePost(true)}
+              className="p-2 hover:bg-muted/80 rounded-lg transition-colors"
+            >
+              <Plus className="h-5 w-5 text-foreground" />
+            </button>
+          )}
         </div>
       </header>
       
@@ -173,25 +193,37 @@ const Profile = () => {
             <div className="flex items-start gap-4 mb-4">
               {/* Avatar with Story Ring */}
               <div className="relative flex-shrink-0">
-                <Avatar className="h-20 w-20 border-2 border-primary">
-                  <AvatarImage src={investorData.avatar} alt={investorData.name} />
-                  <AvatarFallback className="text-xl bg-muted">
-                    {investorData.name[0]}
-                  </AvatarFallback>
-                </Avatar>
-                <button className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-primary border-2 border-background flex items-center justify-center hover:bg-primary/90 transition-colors">
-                  <Plus className="h-4 w-4 text-primary-foreground" strokeWidth={3} />
-                </button>
+                {investorData.avatar ? (
+                  <>
+                    <Avatar className="h-20 w-20 border-2 border-primary">
+                      <AvatarImage src={investorData.avatar} alt={investorData.name} />
+                      <AvatarFallback className="text-xl bg-muted">
+                        {investorData.name[0] || investorData.username[1]}
+                      </AvatarFallback>
+                    </Avatar>
+                    <button className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-primary border-2 border-background flex items-center justify-center hover:bg-primary/90 transition-colors">
+                      <Plus className="h-4 w-4 text-primary-foreground" strokeWidth={3} />
+                    </button>
+                  </>
+                ) : (
+                  <Avatar className="h-20 w-20 bg-muted">
+                    <AvatarFallback className="text-xl bg-muted text-muted-foreground">
+                      {investorData.username[1] || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+                )}
               </div>
 
               {/* Name, Stats, and Menu */}
               <div className="flex-1 min-w-0">
                 {/* Name */}
-                <div className="flex items-center gap-2 mb-2">
-                  <h1 className="text-sm font-normal text-foreground truncate">
-                    {investorData.name}
-                  </h1>
-                </div>
+                {investorData.name && (
+                  <div className="flex items-center gap-2 mb-2">
+                    <h1 className="text-sm font-normal text-foreground truncate">
+                      {investorData.name}
+                    </h1>
+                  </div>
+                )}
 
                 {/* Stats Row - Instagram Style */}
                 <div className="flex gap-6">
@@ -218,67 +250,89 @@ const Profile = () => {
             </div>
 
             {/* Location */}
-            <div className="flex items-center gap-1 text-xs text-muted-foreground mb-2">
-              <MapPin className="h-3 w-3" />
-              {investorData.location}
-            </div>
+            {!isNewAccount || profileSetupComplete ? (
+              <div className="flex items-center gap-1 text-xs text-muted-foreground mb-2">
+                <MapPin className="h-3 w-3" />
+                {investorData.location}
+              </div>
+            ) : null}
 
             {/* Bio */}
-            <p className="text-sm text-foreground leading-relaxed">
-              {investorData.bio}
-            </p>
+            {!isNewAccount || profileSetupComplete ? (
+              <p className="text-sm text-foreground leading-relaxed">
+                {investorData.bio}
+              </p>
+            ) : null}
+
+            {/* Setup Profile Button for New Accounts */}
+            {isNewAccount && !profileSetupComplete && (
+              <div className="mt-4">
+                <Button
+                  onClick={() => navigate('/setup-profile-apple')}
+                  className="w-full"
+                >
+                  Setup Profile
+                </Button>
+                <p className="text-xs text-center text-muted-foreground mt-2">
+                  Complete your profile setup to unlock all features
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Three Section Navigation */}
-          <div className="mt-3">
-            <div className="grid grid-cols-3 text-center">
-              <button
-                onClick={() => {
-                  if (activeSection === 'posts') {
-                    setShowReels(!showReels);
-                  } else {
-                    setActiveSection('posts');
-                  }
-                }}
-                className={`py-3 text-sm font-medium border-b-2 transition-colors flex items-center justify-center gap-1.5 ${
-                  activeSection === 'posts'
-                    ? 'border-foreground text-foreground'
-                    : 'border-transparent text-muted-foreground'
-                }`}
-              >
-                {activeSection === 'posts' ? (showReels ? 'Reels' : 'Posts') : 'Posts'}
-                {activeSection === 'posts' && (
-                  <ChevronLeft 
-                    className={`h-3.5 w-3.5 transition-transform ${showReels ? '-rotate-90' : 'rotate-90'}`}
-                  />
-                )}
-              </button>
-              <button
-                onClick={() => setActiveSection('expand')}
-                className={`py-3 text-sm font-medium border-b-2 transition-colors ${
-                  activeSection === 'expand'
-                    ? 'border-foreground text-foreground'
-                    : 'border-transparent text-muted-foreground'
-                }`}
-              >
-                Expand
-              </button>
-              <button
-                onClick={() => setActiveSection('trades')}
-                className={`py-3 text-sm font-medium border-b-2 transition-colors ${
-                  activeSection === 'trades'
-                    ? 'border-foreground text-foreground'
-                    : 'border-transparent text-muted-foreground'
-                }`}
-              >
-                Trades
-              </button>
+          {(!isNewAccount || profileSetupComplete) && (
+            <div className="mt-3">
+              <div className="grid grid-cols-3 text-center">
+                <button
+                  onClick={() => {
+                    if (activeSection === 'posts') {
+                      setShowReels(!showReels);
+                    } else {
+                      setActiveSection('posts');
+                    }
+                  }}
+                  className={`py-3 text-sm font-medium border-b-2 transition-colors flex items-center justify-center gap-1.5 ${
+                    activeSection === 'posts'
+                      ? 'border-foreground text-foreground'
+                      : 'border-transparent text-muted-foreground'
+                  }`}
+                >
+                  {activeSection === 'posts' ? (showReels ? 'Reels' : 'Posts') : 'Posts'}
+                  {activeSection === 'posts' && (
+                    <ChevronLeft 
+                      className={`h-3.5 w-3.5 transition-transform ${showReels ? '-rotate-90' : 'rotate-90'}`}
+                    />
+                  )}
+                </button>
+                <button
+                  onClick={() => setActiveSection('expand')}
+                  className={`py-3 text-sm font-medium border-b-2 transition-colors ${
+                    activeSection === 'expand'
+                      ? 'border-foreground text-foreground'
+                      : 'border-transparent text-muted-foreground'
+                  }`}
+                >
+                  Expand
+                </button>
+                <button
+                  onClick={() => setActiveSection('trades')}
+                  className={`py-3 text-sm font-medium border-b-2 transition-colors ${
+                    activeSection === 'trades'
+                      ? 'border-foreground text-foreground'
+                      : 'border-transparent text-muted-foreground'
+                  }`}
+                >
+                  Trades
+                </button>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Content Sections */}
-          <div className="px-4 py-4">
-            {activeSection === 'posts' && (
+          {(!isNewAccount || profileSetupComplete) && (
+            <div className="px-4 py-4">
+              {activeSection === 'posts' && (
               <div className="space-y-4">
                 {/* Grid of Posts/Reels */}
                 <div className="grid grid-cols-3 gap-1">
@@ -602,6 +656,7 @@ const Profile = () => {
               </div>
             )}
           </div>
+          )}
         </div>
       </main>
 

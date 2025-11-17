@@ -17,6 +17,10 @@ import Assets from "./pages/Assets";
 import Settings from "./pages/Settings";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import SignupConfirm from "./pages/SignupConfirm";
+import SetupProfileApple from "./pages/SetupProfileApple";
+import SetupProfileBanana from "./pages/SetupProfileBanana";
+import SetupProfileKiwi from "./pages/SetupProfileKiwi";
 import RoleSelection from "./pages/RoleSelection";
 import VerificationStart from "./pages/VerificationStart";
 import VerificationKYC from "./pages/VerificationKYC";
@@ -48,6 +52,10 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/signup-confirm" element={<SignupConfirm />} />
+          <Route path="/setup-profile-apple" element={<SetupProfileApple />} />
+          <Route path="/setup-profile-banana" element={<SetupProfileBanana />} />
+          <Route path="/setup-profile-kiwi" element={<SetupProfileKiwi />} />
           <Route path="/role-selection" element={<RoleSelection />} />
           <Route path="/trade" element={<Trade />} />
           <Route path="/messages" element={<Messages />} />
