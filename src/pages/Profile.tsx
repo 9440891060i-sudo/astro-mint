@@ -636,7 +636,7 @@ const Profile = () => {
 
       {/* Edit Profile Drawer */}
       <Sheet open={showEditProfile} onOpenChange={setShowEditProfile}>
-        <SheetContent side="bottom" className="h-[80vh] overflow-y-auto">
+        <SheetContent side="bottom" className="h-[80vh] overflow-y-auto max-w-2xl mx-auto">
           <SheetHeader>
             <SheetTitle>Edit Profile</SheetTitle>
           </SheetHeader>
@@ -677,7 +677,7 @@ const Profile = () => {
 
       {/* Professional Dashboard Drawer */}
       <Sheet open={showDashboard} onOpenChange={setShowDashboard}>
-        <SheetContent side="bottom" className="h-[80vh] overflow-y-auto">
+        <SheetContent side="bottom" className="h-[80vh] overflow-y-auto max-w-2xl mx-auto">
           <SheetHeader>
             <SheetTitle>Professional Dashboard</SheetTitle>
           </SheetHeader>
