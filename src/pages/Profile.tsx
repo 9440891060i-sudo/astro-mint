@@ -8,7 +8,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Menu, MapPin, TrendingUp, TrendingDown, DollarSign, Target, Activity, Calendar, ArrowUpRight, ArrowDownRight, Wallet, CheckCircle2, XCircle, Plus, ChevronLeft } from "lucide-react";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Menu, MapPin, TrendingUp, TrendingDown, DollarSign, Target, Activity, Calendar, ArrowUpRight, ArrowDownRight, Wallet, CheckCircle2, XCircle, Plus, ChevronLeft, User, Eye, Heart, MousePointerClick } from "lucide-react";
 
 interface Investment {
   id: string;
@@ -30,6 +33,8 @@ const Profile = () => {
   const [activeSection, setActiveSection] = useState<'posts' | 'expand' | 'trades'>('posts');
   const [showReels, setShowReels] = useState(false);
   const [showCreatePost, setShowCreatePost] = useState(false);
+  const [showEditProfile, setShowEditProfile] = useState(false);
+  const [showDashboard, setShowDashboard] = useState(false);
 
   // Mock investor data
   const investorData = {
@@ -227,6 +232,24 @@ const Profile = () => {
             <p className="text-sm text-foreground leading-relaxed">
               {investorData.bio}
             </p>
+
+            {/* Action Buttons */}
+            <div className="grid grid-cols-2 gap-3 mt-4">
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => setShowEditProfile(true)}
+              >
+                Edit Profile
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => setShowDashboard(true)}
+              >
+                Professional Dashboard
+              </Button>
+            </div>
           </div>
 
           {/* Three Section Navigation */}
@@ -610,6 +633,139 @@ const Profile = () => {
       {showCreatePost && (
         <CreatePost onClose={() => setShowCreatePost(false)} />
       )}
+
+      {/* Edit Profile Drawer */}
+      <Sheet open={showEditProfile} onOpenChange={setShowEditProfile}>
+        <SheetContent side="bottom" className="h-[80vh] overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Edit Profile</SheetTitle>
+          </SheetHeader>
+          <div className="space-y-6 mt-6">
+            {/* Profile Image */}
+            <div className="flex flex-col items-center gap-4">
+              <Avatar className="h-24 w-24">
+                <AvatarImage src={investorData.avatar} />
+                <AvatarFallback>{investorData.name.charAt(0)}</AvatarFallback>
+              </Avatar>
+              <Button variant="outline" size="sm">
+                Change Photo
+              </Button>
+            </div>
+
+            {/* Name */}
+            <div className="space-y-2">
+              <Label htmlFor="edit-name">Name</Label>
+              <Input id="edit-name" defaultValue={investorData.name} />
+            </div>
+
+            {/* Username */}
+            <div className="space-y-2">
+              <Label htmlFor="edit-username">Username</Label>
+              <Input id="edit-username" defaultValue={investorData.username} />
+            </div>
+
+            {/* Location */}
+            <div className="space-y-2">
+              <Label htmlFor="edit-location">Location</Label>
+              <Input id="edit-location" defaultValue={investorData.location} />
+            </div>
+
+            <Button className="w-full">Save Changes</Button>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* Professional Dashboard Drawer */}
+      <Sheet open={showDashboard} onOpenChange={setShowDashboard}>
+        <SheetContent side="bottom" className="h-[80vh] overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Professional Dashboard</SheetTitle>
+          </SheetHeader>
+          <div className="space-y-4 mt-6">
+            {/* Stats Grid */}
+            <div className="grid grid-cols-2 gap-4">
+              <Card className="border-border">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                      <Eye className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-semibold text-foreground">
+                        {formatNumber(investorData.stats.profileViews)}
+                      </p>
+                      <p className="text-xs text-muted-foreground">Profile Visits</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-border">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                      <MousePointerClick className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-semibold text-foreground">1,247</p>
+                      <p className="text-xs text-muted-foreground">Account Activity</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-border">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                      <Heart className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-semibold text-foreground">8,342</p>
+                      <p className="text-xs text-muted-foreground">Total Likes (30d)</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-border">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                      <Activity className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-semibold text-foreground">94%</p>
+                      <p className="text-xs text-muted-foreground">Engagement Rate</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Performance Overview */}
+            <Card className="border-border">
+              <CardHeader>
+                <CardTitle className="text-base">Performance Overview</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Avg. Daily Views</span>
+                  <span className="text-sm font-semibold text-foreground">423</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Peak Views Day</span>
+                  <span className="text-sm font-semibold text-foreground">1,284</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Growth Rate</span>
+                  <span className="text-sm font-semibold text-primary">+24%</span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };
