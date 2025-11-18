@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { Camera, ArrowLeft, Check } from "lucide-react";
 
@@ -12,6 +13,7 @@ const SetupProfileApple = () => {
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
   const [username, setUsername] = useState(localStorage.getItem("signupUsername") || "");
   const [fullName, setFullName] = useState("");
+  const [quickBio, setQuickBio] = useState("");
   const [accountType, setAccountType] = useState<"investor" | "startup" | "personal" | null>(null);
   const [email, setEmail] = useState(localStorage.getItem("signupEmail") || "");
   const [showCodeInput, setShowCodeInput] = useState(false);
@@ -93,10 +95,11 @@ const SetupProfileApple = () => {
 
     localStorage.setItem("setupProfilePhoto", profilePhoto || "");
     localStorage.setItem("setupFullName", fullName);
+    localStorage.setItem("setupQuickBio", quickBio);
     localStorage.setItem("setupAccountType", accountType);
 
     if (accountType === "investor") {
-      navigate("/setup-profile-banana");
+      navigate("/setup-profile-kiwi");
     } else {
       navigate("/profile");
     }
@@ -166,32 +169,42 @@ const SetupProfileApple = () => {
             />
           </div>
 
-          <div className="space-y-3">
-            <Label>Account Type</Label>
+          <div className="space-y-2">
+            <Label>Quick Bio</Label>
+            <Textarea
+              placeholder="Tell us about yourself"
+              value={quickBio}
+              onChange={(e) => setQuickBio(e.target.value)}
+              className="min-h-[80px] resize-none"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-sm">Account Type</Label>
             {!accountType ? (
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <button
                   onClick={() => setAccountType("investor")}
-                  className="w-full p-3 rounded-lg border border-border hover:border-primary/50 transition-all text-sm"
+                  className="w-full p-2.5 rounded-md border border-border hover:bg-accent transition-colors text-sm font-medium"
                 >
-                  <p className="font-medium">Investor</p>
+                  Investor
                 </button>
                 <button
                   onClick={() => setAccountType("startup")}
-                  className="w-full p-3 rounded-lg border border-border hover:border-primary/50 transition-all text-sm"
+                  className="w-full p-2.5 rounded-md border border-border hover:bg-accent transition-colors text-sm font-medium"
                 >
-                  <p className="font-medium">Startup</p>
+                  Startup
                 </button>
                 <button
                   onClick={() => setAccountType("personal")}
-                  className="w-full p-3 rounded-lg border border-border hover:border-primary/50 transition-all text-sm"
+                  className="w-full p-2.5 rounded-md border border-border hover:bg-accent transition-colors text-sm font-medium"
                 >
-                  <p className="font-medium">Personal Account</p>
+                  Personal Account
                 </button>
               </div>
             ) : (
-              <div className="p-3 rounded-lg border-2 border-primary bg-primary/10">
-                <p className="font-medium text-sm capitalize">{accountType === "personal" ? "Personal Account" : accountType}</p>
+              <div className="p-2.5 rounded-md border border-primary bg-primary/5">
+                <p className="text-sm font-medium capitalize">{accountType === "personal" ? "Personal Account" : accountType}</p>
               </div>
             )}
           </div>
@@ -247,9 +260,9 @@ const SetupProfileApple = () => {
           )}
 
           {accountType && emailVerified && (
-            <div className="p-4 bg-muted/50 rounded-lg space-y-3 animate-in slide-in-from-top">
-              <p className="text-sm text-muted-foreground">
-                <strong>Important:</strong> You won't be able to change your account type after this step.
+            <div className="p-3 bg-muted/30 rounded-md space-y-2.5 animate-in slide-in-from-top">
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                <strong className="font-semibold">Important:</strong> You won't be able to change your account type after this step.
               </p>
               <div className="flex items-start space-x-2">
                 <Checkbox
@@ -259,7 +272,7 @@ const SetupProfileApple = () => {
                 />
                 <label
                   htmlFor="disclaimer"
-                  className="text-sm text-foreground leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  className="text-xs text-foreground leading-relaxed cursor-pointer peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
                   I have read and accept this disclaimer
                 </label>
