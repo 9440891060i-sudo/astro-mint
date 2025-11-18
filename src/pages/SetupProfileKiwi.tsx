@@ -74,14 +74,13 @@ const SetupProfileKiwi = () => {
     localStorage.setItem("setupStages", JSON.stringify(stages));
     localStorage.setItem("setupGeographies", JSON.stringify(geographies));
     localStorage.setItem("setupCheckSize", checkSize);
-    localStorage.setItem("profileSetupComplete", "true");
 
     toast({
-      title: "Profile Setup Complete",
-      description: "Your profile has been set up successfully!",
+      title: "Investment Preferences Saved",
+      description: "Proceeding to KYC verification",
     });
 
-    navigate("/profile");
+    navigate("/kyc-verification");
   };
 
   const handleBack = () => {
