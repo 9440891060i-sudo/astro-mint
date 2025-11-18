@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
-import { Loader2, Check } from "lucide-react";
+import { ArrowLeft, Check } from "lucide-react";
 
 const SetupProfileBanana = () => {
   const navigate = useNavigate();
@@ -86,12 +86,24 @@ const SetupProfileBanana = () => {
     navigate("/setup-profile-kiwi");
   };
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   return (
     <div className="min-h-screen bg-background flex flex-col px-6 py-8">
       <div className="max-w-md mx-auto w-full space-y-8">
-        <div className="text-center">
-          <h2 className="text-2xl font-semibold text-foreground">Investor Details</h2>
-          <p className="text-sm text-muted-foreground mt-2">Step 2 of 3</p>
+        <div className="flex items-center justify-between">
+          <Button variant="ghost" size="icon" onClick={handleBack}>
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <div className="text-center flex-1">
+            <h2 className="text-2xl font-semibold text-foreground">Investor Details</h2>
+            <p className="text-sm text-muted-foreground mt-2">Step 2 of 3</p>
+          </div>
+          <Button variant="ghost" size="sm" onClick={handleNext}>
+            Save
+          </Button>
         </div>
 
         <div className="space-y-6">

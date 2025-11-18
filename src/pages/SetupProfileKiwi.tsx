@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
-import { X } from "lucide-react";
+import { X, ArrowLeft } from "lucide-react";
 
 const FOCUS_OPTIONS = ["AI", "SaaS", "Drones", "FinTech", "HealthTech", "EdTech", "E-commerce", "Blockchain", "IoT", "CleanTech"];
 const STAGE_OPTIONS = ["Pre-seed", "Seed", "Series A", "Series B", "Series C", "Series D+"];
@@ -67,12 +67,24 @@ const SetupProfileKiwi = () => {
     navigate("/profile");
   };
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   return (
     <div className="min-h-screen bg-background flex flex-col px-6 py-8">
       <div className="max-w-md mx-auto w-full space-y-8">
-        <div className="text-center">
-          <h2 className="text-2xl font-semibold text-foreground">Expand Your Profile</h2>
-          <p className="text-sm text-muted-foreground mt-2">Step 3 of 3</p>
+        <div className="flex items-center justify-between">
+          <Button variant="ghost" size="icon" onClick={handleBack}>
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <div className="text-center flex-1">
+            <h2 className="text-2xl font-semibold text-foreground">Expand Your Profile</h2>
+            <p className="text-sm text-muted-foreground mt-2">Step 3 of 3</p>
+          </div>
+          <Button variant="ghost" size="sm" onClick={handleComplete}>
+            Save
+          </Button>
         </div>
 
         <div className="space-y-6">
