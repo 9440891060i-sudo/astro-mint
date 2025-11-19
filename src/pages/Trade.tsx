@@ -16,17 +16,21 @@ interface ActiveTrade {
   id: number;
   companyId: number;
   companyName: string;
-  preMoneyValuation: string;
-  postMoneyValuation: string;
+  companyUsername: string;
+  description: string;
   minRange: number;
   maxRange: number;
+  images: string[];
+  video?: string;
   views: number;
   saves: number;
+  isEdited?: boolean;
 }
 
 interface ScanAd {
   id: number;
   name: string;
+  username: string;
   avatar: string;
   type: 'Investor' | 'Startup';
   companyName: string;
@@ -34,11 +38,11 @@ interface ScanAd {
   companyAge: string;
   revenue: string;
   fundsRaised: string;
-  preMoneyValuation: string;
-  postMoneyValuation: string;
+  description: string;
   minRange: number;
   maxRange: number;
   companyPhotos: string[];
+  video?: string;
   isSponsored?: boolean;
 }
 
@@ -55,16 +59,16 @@ const categories = [
 const scanAds: ScanAd[] = [
   { 
     id: 1, 
-    name: "Rajesh Mukarji", 
+    name: "Rajesh Mukarji",
+    username: "@rajeshm",
     avatar: "https://i.pravatar.cc/150?img=12",
     type: "Investor",
     companyName: "Airbound Pvt Ltd",
     companyTagline: "Revolutionizing logistics with AI-powered drone delivery solutions",
+    description: "Airbound is pioneering the future of logistics with cutting-edge AI-powered autonomous drones. Our technology enables faster, more efficient, and cost-effective delivery solutions for businesses of all sizes. We're transforming last-mile delivery with smart routing and real-time tracking.",
     companyAge: "2 years",
     revenue: "Revenue Generating",
     fundsRaised: "₹25,00,000",
-    preMoneyValuation: "₹35,00,000",
-    postMoneyValuation: "₹50,00,000",
     minRange: 15,
     maxRange: 40,
     companyPhotos: [
@@ -76,16 +80,16 @@ const scanAds: ScanAd[] = [
   },
   { 
     id: 2, 
-    name: "Joshua Paul", 
+    name: "Joshua Paul",
+    username: "@joshuap",
     avatar: "https://i.pravatar.cc/150?img=33",
     type: "Investor",
     companyName: "Zlyft Autonomy Pvt Ltd",
     companyTagline: "Building next-gen autonomous vehicles for urban transportation",
+    description: "Zlyft is at the forefront of autonomous vehicle technology, developing advanced self-driving systems for urban mobility. Our vehicles combine cutting-edge AI, sensor fusion, and machine learning to provide safe, reliable transportation.",
     companyAge: "1.5 years",
     revenue: "Pre Revenue",
     fundsRaised: "₹15,00,000",
-    preMoneyValuation: "₹80,00,000",
-    postMoneyValuation: "₹1,20,00,000",
     minRange: 10,
     maxRange: 35,
     companyPhotos: [
@@ -96,16 +100,16 @@ const scanAds: ScanAd[] = [
   },
   { 
     id: 3, 
-    name: "Priya Sharma", 
+    name: "Priya Sharma",
+    username: "@priyas",
     avatar: "https://i.pravatar.cc/150?img=47",
     type: "Startup",
     companyName: "TechFlow Solutions",
     companyTagline: "Streamlining enterprise workflows with intelligent automation",
+    description: "TechFlow provides intelligent workflow automation tools that help enterprises optimize their operations. Our platform uses AI to identify bottlenecks and automate repetitive tasks, increasing productivity and reducing costs.",
     companyAge: "3 years",
     revenue: "Revenue Generating",
     fundsRaised: "₹40,00,000",
-    preMoneyValuation: "₹60,00,000",
-    postMoneyValuation: "₹90,00,000",
     minRange: 20,
     maxRange: 50,
     companyPhotos: [
