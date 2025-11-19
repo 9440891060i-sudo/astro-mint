@@ -330,8 +330,18 @@ const sellers = [
 ];
 
 const portfolio = [
-  { id: 1, name: "Airbound Pvt Ltd", postMoneyValuation: "₹50,00,000", preMoneyValuation: "₹35,00,000" },
-  { id: 2, name: "Zlyft Autonomy Pvt Ltd", postMoneyValuation: "₹1,20,00,000", preMoneyValuation: "₹80,00,000" },
+  { 
+    id: 1, 
+    name: "Airbound Pvt Ltd",
+    username: "@airbound",
+    description: "Revolutionizing logistics with AI-powered drone delivery solutions"
+  },
+  { 
+    id: 2, 
+    name: "Zlyft Autonomy Pvt Ltd",
+    username: "@zlyft",
+    description: "Building next-gen autonomous vehicles for urban transportation"
+  },
 ];
 
 const Trade = () => {
@@ -345,6 +355,11 @@ const Trade = () => {
   const [expandedCompany, setExpandedCompany] = useState<number | null>(null);
   const [minRange, setMinRange] = useState<number>(10);
   const [maxRange, setMaxRange] = useState<number>(50);
+  const [tradeDescription, setTradeDescription] = useState("");
+  const [tradeUsername, setTradeUsername] = useState("");
+  const [manualEntry, setManualEntry] = useState(false);
+  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const [uploadedVideo, setUploadedVideo] = useState<string>();
   const [activeTrades, setActiveTrades] = useState<ActiveTrade[]>([]);
   const [savedSellers, setSavedSellers] = useState<number[]>([1, 3, 5]);
   const [savedScanAds, setSavedScanAds] = useState<number[]>([1, 4]);
@@ -405,18 +420,26 @@ const Trade = () => {
       id: Date.now(),
       companyId: company.id,
       companyName: company.name,
-      preMoneyValuation: company.preMoneyValuation,
-      postMoneyValuation: company.postMoneyValuation,
+      companyUsername: tradeUsername || company.username,
+      description: tradeDescription,
       minRange,
       maxRange,
+      images: uploadedImages,
+      video: uploadedVideo,
       views: 0,
       saves: 0,
+      isEdited: false,
     };
 
     setActiveTrades([...activeTrades, newTrade]);
     setExpandedCompany(null);
     setMinRange(10);
     setMaxRange(50);
+    setTradeDescription("");
+    setTradeUsername("");
+    setManualEntry(false);
+    setUploadedImages([]);
+    setUploadedVideo(undefined);
   };
 
   const handleDeleteTrade = (tradeId: number) => {
