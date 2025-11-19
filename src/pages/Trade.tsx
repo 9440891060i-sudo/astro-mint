@@ -16,12 +16,16 @@ interface ActiveTrade {
   id: number;
   companyId: number;
   companyName: string;
-  preMoneyValuation: string;
-  postMoneyValuation: string;
-  minRange: number;
-  maxRange: number;
+  description: string;
+  startupUsername: string;
+  sellingRangeMin: number;
+  sellingRangeMax: number;
+  videoUrl?: string;
+  imageUrls: string[];
   views: number;
   saves: number;
+  isEdited: boolean;
+  isManualEntry: boolean;
 }
 
 interface ScanAd {
@@ -339,8 +343,13 @@ const Trade = () => {
   const [searchValue, setSearchValue] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [expandedCompany, setExpandedCompany] = useState<number | null>(null);
-  const [minRange, setMinRange] = useState<number>(10);
-  const [maxRange, setMaxRange] = useState<number>(50);
+  const [sellingRangeMin, setSellingRangeMin] = useState<number>(10);
+  const [sellingRangeMax, setSellingRangeMax] = useState<number>(40);
+  const [description, setDescription] = useState<string>("");
+  const [startupUsername, setStartupUsername] = useState<string>("");
+  const [isManualEntry, setIsManualEntry] = useState<boolean>(false);
+  const [videoUrl, setVideoUrl] = useState<string>("");
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [activeTrades, setActiveTrades] = useState<ActiveTrade[]>([]);
   const [savedSellers, setSavedSellers] = useState<number[]>([1, 3, 5]);
   const [savedScanAds, setSavedScanAds] = useState<number[]>([1, 4]);
@@ -401,18 +410,27 @@ const Trade = () => {
       id: Date.now(),
       companyId: company.id,
       companyName: company.name,
-      preMoneyValuation: company.preMoneyValuation,
-      postMoneyValuation: company.postMoneyValuation,
-      minRange,
-      maxRange,
+      description,
+      startupUsername: startupUsername || company.name.toLowerCase().replace(/\s+/g, ''),
+      sellingRangeMin,
+      sellingRangeMax,
+      videoUrl,
+      imageUrls,
       views: 0,
       saves: 0,
+      isEdited: false,
+      isManualEntry,
     };
 
     setActiveTrades([...activeTrades, newTrade]);
     setExpandedCompany(null);
-    setMinRange(10);
-    setMaxRange(50);
+    setSellingRangeMin(10);
+    setSellingRangeMax(40);
+    setDescription("");
+    setStartupUsername("");
+    setIsManualEntry(false);
+    setVideoUrl("");
+    setImageUrls([]);
   };
 
   const handleDeleteTrade = (tradeId: number) => {
@@ -423,8 +441,13 @@ const Trade = () => {
     const trade = activeTrades.find(t => t.id === tradeId);
     if (trade) {
       setExpandedCompany(trade.companyId);
-      setMinRange(trade.minRange);
-      setMaxRange(trade.maxRange);
+      setSellingRangeMin(trade.sellingRangeMin);
+      setSellingRangeMax(trade.sellingRangeMax);
+      setDescription(trade.description);
+      setStartupUsername(trade.startupUsername);
+      setIsManualEntry(trade.isManualEntry);
+      setVideoUrl(trade.videoUrl || "");
+      setImageUrls(trade.imageUrls);
       handleDeleteTrade(tradeId);
     }
   };
@@ -494,86 +517,134 @@ const Trade = () => {
                     {expandedCompany === company.id && (
                       <div className="p-6 bg-muted/50 space-y-6">
                         <div className="space-y-2">
-                          <h3 className="text-xl font-bold text-foreground">{company.name}</h3>
-                          <div className="flex gap-6 text-sm">
-                            <div>
-                              <span className="text-muted-foreground">Pre Money: </span>
-                              <span className="font-medium text-foreground">{company.preMoneyValuation}</span>
-                            </div>
-                            <div>
-                              <span className="text-muted-foreground">Post Money: </span>
-                              <span className="font-medium text-foreground">{company.postMoneyValuation}</span>
-                            </div>
-                          </div>
+                          <h3 className="text-lg font-semibold text-foreground">{company.name}</h3>
                         </div>
 
-                        <div className="space-y-6">
-                          <div className="space-y-3">
-                            <div className="flex items-center justify-between gap-4">
-                              <Label className="text-foreground">Minimum Buying Requirement</Label>
-                              <div className="flex items-center gap-2">
-                                <Input
-                                  type="number"
-                                  value={minRange}
-                                  onChange={(e) => setMinRange(Math.max(0, Math.min(100, parseFloat(e.target.value) || 0)))}
-                                  step="0.01"
-                                  min="0"
-                                  max="100"
-                                  className="w-20 h-8 text-sm text-right"
-                                />
-                                <span className="text-sm font-medium text-foreground">%</span>
-                              </div>
-                            </div>
-                            <Slider
-                              value={[minRange]}
-                              onValueChange={(value) => setMinRange(value[0])}
-                              max={100}
-                              step={0.01}
-                              className="w-full"
-                            />
-                          </div>
-
-                          <div className="space-y-3">
-                            <div className="flex items-center justify-between gap-4">
-                              <Label className="text-foreground">Maximum Buying Requirement</Label>
-                              <div className="flex items-center gap-2">
-                                <Input
-                                  type="number"
-                                  value={maxRange}
-                                  onChange={(e) => setMaxRange(Math.max(0, Math.min(100, parseFloat(e.target.value) || 0)))}
-                                  step="0.01"
-                                  min="0"
-                                  max="100"
-                                  className="w-20 h-8 text-sm text-right"
-                                />
-                                <span className="text-sm font-medium text-foreground">%</span>
-                              </div>
-                            </div>
-                            <Slider
-                              value={[maxRange]}
-                              onValueChange={(value) => setMaxRange(value[0])}
-                              max={100}
-                              step={0.01}
-                              className="w-full"
-                            />
-                          </div>
-                        </div>
-
+                        {/* Description */}
                         <div className="space-y-2">
-                          <Label className="text-muted-foreground text-xs">Seller's Range</Label>
-                          <div className="relative h-2 bg-background rounded-full overflow-hidden">
-                            <div
-                              className="absolute h-full bg-primary"
-                              style={{
-                                left: `${minRange}%`,
-                                width: `${maxRange - minRange}%`,
-                              }}
-                            />
+                          <Label className="text-sm text-foreground">Description</Label>
+                          <textarea
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            placeholder="Add a quick description about this trade..."
+                            className="w-full min-h-[80px] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
+                          />
+                        </div>
+
+                        {/* Selling Range */}
+                        <div className="space-y-3">
+                          <Label className="text-sm text-foreground">Selling Range</Label>
+                          <div className="flex items-center gap-3">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2">
+                                <Input
+                                  type="number"
+                                  value={sellingRangeMin}
+                                  onChange={(e) => setSellingRangeMin(Math.max(0, Math.min(100, parseFloat(e.target.value) || 0)))}
+                                  step="0.01"
+                                  min="0"
+                                  max="100"
+                                  placeholder="Min %"
+                                  className="h-10 text-sm"
+                                />
+                                <span className="text-sm font-medium text-foreground">%</span>
+                              </div>
+                            </div>
+                            <span className="text-muted-foreground">-</span>
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2">
+                                <Input
+                                  type="number"
+                                  value={sellingRangeMax}
+                                  onChange={(e) => setSellingRangeMax(Math.max(0, Math.min(100, parseFloat(e.target.value) || 0)))}
+                                  step="0.01"
+                                  min="0"
+                                  max="100"
+                                  placeholder="Max %"
+                                  className="h-10 text-sm"
+                                />
+                                <span className="text-sm font-medium text-foreground">%</span>
+                              </div>
+                            </div>
                           </div>
-                          <div className="flex justify-between text-xs text-muted-foreground">
-                            <span>0%</span>
-                            <span>100%</span>
+                        </div>
+
+                        {/* Startup Details Entry Method */}
+                        <div className="space-y-3">
+                          <Label className="text-sm text-foreground">Startup Details</Label>
+                          <div className="flex items-center gap-3">
+                            <Button
+                              type="button"
+                              variant={!isManualEntry ? "default" : "outline"}
+                              size="sm"
+                              onClick={() => setIsManualEntry(false)}
+                              className="flex-1"
+                            >
+                              Username
+                            </Button>
+                            <Button
+                              type="button"
+                              variant={isManualEntry ? "default" : "outline"}
+                              size="sm"
+                              onClick={() => setIsManualEntry(true)}
+                              className="flex-1"
+                            >
+                              Manual Entry
+                            </Button>
                           </div>
+
+                          {!isManualEntry ? (
+                            <div className="space-y-2">
+                              <Input
+                                type="text"
+                                value={startupUsername}
+                                onChange={(e) => setStartupUsername(e.target.value)}
+                                placeholder="Enter startup username..."
+                                className="h-10 text-sm"
+                              />
+                              <p className="text-xs text-muted-foreground">
+                                Enter username to auto-fill startup details
+                              </p>
+                            </div>
+                          ) : (
+                            <div className="space-y-4 pt-2">
+                              {/* Manual Entry Fields */}
+                              <div className="space-y-2">
+                                <Label className="text-sm text-muted-foreground">Startup Username</Label>
+                                <Input
+                                  type="text"
+                                  value={startupUsername}
+                                  onChange={(e) => setStartupUsername(e.target.value)}
+                                  placeholder="@username"
+                                  className="h-10 text-sm"
+                                />
+                              </div>
+
+                              {/* Video Upload */}
+                              <div className="space-y-2">
+                                <Label className="text-sm text-muted-foreground">Upload Video (Optional)</Label>
+                                <Input
+                                  type="text"
+                                  value={videoUrl}
+                                  onChange={(e) => setVideoUrl(e.target.value)}
+                                  placeholder="Video URL..."
+                                  className="h-10 text-sm"
+                                />
+                              </div>
+
+                              {/* Image Upload */}
+                              <div className="space-y-2">
+                                <Label className="text-sm text-muted-foreground">Upload Images (Optional)</Label>
+                                <Input
+                                  type="text"
+                                  value={imageUrls.join(', ')}
+                                  onChange={(e) => setImageUrls(e.target.value.split(',').map(url => url.trim()).filter(Boolean))}
+                                  placeholder="Image URLs (comma separated)..."
+                                  className="h-10 text-sm"
+                                />
+                              </div>
+                            </div>
+                          )}
                         </div>
 
                         <Button
@@ -595,66 +666,94 @@ const Trade = () => {
               {activeTrades.length > 0 ? (
                 <div className="space-y-4">
                   {activeTrades.map((trade) => (
-                    <div key={trade.id} className="border border-border rounded-lg p-6 bg-card">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center gap-3">
-                          <Avatar className="w-12 h-12">
-                            <AvatarFallback className="bg-muted text-foreground">
-                              You
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <h3 className="font-semibold text-foreground">{trade.companyName}</h3>
-                            <div className="flex gap-4 text-sm text-muted-foreground mt-1">
-                              <span>Pre: {trade.preMoneyValuation}</span>
-                              <span>Post: {trade.postMoneyValuation}</span>
+                    <div key={trade.id} className="border border-border rounded-lg overflow-hidden bg-card">
+                      <div className="p-5 space-y-4">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h3 className="font-semibold text-foreground">{trade.companyName}</h3>
                             </div>
+                            <p className="text-xs text-muted-foreground">@{trade.startupUsername}</p>
+                            
+                            {/* Description - Show 1-2 lines */}
+                            {trade.description && (
+                              <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
+                                {trade.description}
+                              </p>
+                            )}
+                          </div>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => handleUpdateTrade(trade.id)}
+                              className="p-2 hover:bg-muted rounded-lg transition-colors"
+                              title="Edit trade"
+                            >
+                              <Edit className="w-4 h-4 text-muted-foreground" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteTrade(trade.id)}
+                              className="p-2 hover:bg-muted rounded-lg transition-colors"
+                              title="Delete trade"
+                            >
+                              <Trash2 className="w-4 h-4 text-destructive" />
+                            </button>
                           </div>
                         </div>
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => handleUpdateTrade(trade.id)}
-                            className="p-2 hover:bg-muted rounded-lg transition-colors"
-                            title="Edit trade"
-                          >
-                            <Edit className="w-4 h-4 text-foreground" />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteTrade(trade.id)}
-                            className="p-2 hover:bg-muted rounded-lg transition-colors"
-                            title="Delete trade"
-                          >
-                            <Trash2 className="w-4 h-4 text-destructive" />
-                          </button>
-                        </div>
-                      </div>
 
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-muted-foreground">Range:</span>
-                          <span className="font-medium text-foreground">{trade.minRange}% - {trade.maxRange}%</span>
+                        {/* Media Display */}
+                        {(trade.videoUrl || trade.imageUrls.length > 0) && (
+                          <div className="space-y-2">
+                            {trade.videoUrl && (
+                              <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
+                                <p className="text-xs text-muted-foreground">Video: {trade.videoUrl}</p>
+                              </div>
+                            )}
+                            {trade.imageUrls.length > 0 && (
+                              <div className="flex gap-2 overflow-x-auto">
+                                {trade.imageUrls.map((url, idx) => (
+                                  <div key={idx} className="w-20 h-20 bg-muted rounded-lg flex-shrink-0 flex items-center justify-center">
+                                    <p className="text-[10px] text-muted-foreground text-center px-1">Image {idx + 1}</p>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Selling Range */}
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-muted-foreground">Selling Range:</span>
+                            <span className="font-medium text-foreground">{trade.sellingRangeMin}% - {trade.sellingRangeMax}%</span>
+                          </div>
+
+                          <div className="relative h-1.5 bg-muted rounded-full overflow-hidden">
+                            <div
+                              className="absolute h-full bg-primary"
+                              style={{
+                                left: `${trade.sellingRangeMin}%`,
+                                width: `${trade.sellingRangeMax - trade.sellingRangeMin}%`,
+                              }}
+                            />
+                          </div>
                         </div>
 
-                        <div className="relative h-2 bg-background rounded-full overflow-hidden">
-                          <div
-                            className="absolute h-full bg-primary"
-                            style={{
-                              left: `${trade.minRange}%`,
-                              width: `${trade.maxRange - trade.minRange}%`,
-                            }}
-                          />
-                        </div>
-
-                        <div className="flex items-center gap-6 text-sm pt-2">
-                          <div className="flex items-center gap-2">
+                        {/* Stats */}
+                        <div className="flex items-center gap-6 text-sm pt-1">
+                          <div className="flex items-center gap-1.5">
                             <span className="text-muted-foreground">Views:</span>
                             <span className="font-medium text-foreground">{trade.views}</span>
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-1.5">
                             <span className="text-muted-foreground">Saves:</span>
                             <span className="font-medium text-foreground">{trade.saves}</span>
                           </div>
                         </div>
+
+                        {/* Edited indicator */}
+                        {trade.isEdited && (
+                          <p className="text-[10px] text-muted-foreground">(edited)</p>
+                        )}
                       </div>
                     </div>
                   ))}
