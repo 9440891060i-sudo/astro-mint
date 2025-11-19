@@ -1,15 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, X, SlidersHorizontal, ChevronDown, ChevronUp, Trash2, Edit, Bookmark, Zap, Heart, AlertCircle, TrendingUp, DollarSign, Calendar, Target } from "lucide-react";
+import { Search, X, SlidersHorizontal, ChevronDown, ChevronUp, Trash2, Edit, Bookmark, Zap, Heart, AlertCircle, TrendingUp, DollarSign, Calendar, Target, Upload, Image as ImageIcon, Video } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent } from "@/components/ui/card";
+import { ImageCropModal } from "@/components/ImageCropModal";
 
 
 interface ActiveTrade {
@@ -348,9 +348,15 @@ const Trade = () => {
   const [description, setDescription] = useState<string>("");
   const [startupUsername, setStartupUsername] = useState<string>("");
   const [isManualEntry, setIsManualEntry] = useState<boolean>(false);
+  const [videoFile, setVideoFile] = useState<File | null>(null);
   const [videoUrl, setVideoUrl] = useState<string>("");
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [cropImageUrl, setCropImageUrl] = useState<string>("");
+  const [isCropModalOpen, setIsCropModalOpen] = useState(false);
   const [activeTrades, setActiveTrades] = useState<ActiveTrade[]>([]);
+  const videoInputRef = useRef<HTMLInputElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
   const [savedSellers, setSavedSellers] = useState<number[]>([1, 3, 5]);
   const [savedScanAds, setSavedScanAds] = useState<number[]>([1, 4]);
   const [showSavedOnly, setShowSavedOnly] = useState(false);
@@ -400,6 +406,34 @@ const Trade = () => {
     setExpandedCompany(expandedCompany === companyId ? null : companyId);
   };
 
+  const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setVideoFile(file);
+      setVideoUrl(URL.createObjectURL(file));
+    }
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length > 0) {
+      const file = files[0];
+      const url = URL.createObjectURL(file);
+      setCropImageUrl(url);
+      setIsCropModalOpen(true);
+    }
+  };
+
+  const handleCropComplete = (croppedUrl: string) => {
+    setImageUrls([...imageUrls, croppedUrl]);
+    setIsCropModalOpen(false);
+    setCropImageUrl("");
+  };
+
+  const removeImage = (index: number) => {
+    setImageUrls(imageUrls.filter((_, i) => i !== index));
+  };
+
   const handleOpenTrade = () => {
     if (expandedCompany === null) return;
     
@@ -429,7 +463,9 @@ const Trade = () => {
     setDescription("");
     setStartupUsername("");
     setIsManualEntry(false);
+    setVideoFile(null);
     setVideoUrl("");
+    setImageFiles([]);
     setImageUrls([]);
   };
 
@@ -515,133 +551,141 @@ const Trade = () => {
                     </button>
 
                     {expandedCompany === company.id && (
-                      <div className="p-6 bg-muted/50 space-y-6">
-                        <div className="space-y-2">
-                          <h3 className="text-lg font-semibold text-foreground">{company.name}</h3>
-                        </div>
-
-                        {/* Description */}
-                        <div className="space-y-2">
-                          <Label className="text-sm text-foreground">Description</Label>
-                          <textarea
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            placeholder="Add a quick description about this trade..."
-                            className="w-full min-h-[80px] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
-                          />
-                        </div>
-
+                      <div className="p-5 bg-card space-y-5">
                         {/* Selling Range */}
-                        <div className="space-y-3">
-                          <Label className="text-sm text-foreground">Selling Range</Label>
-                          <div className="flex items-center gap-3">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2">
-                                <Input
-                                  type="number"
-                                  value={sellingRangeMin}
-                                  onChange={(e) => setSellingRangeMin(Math.max(0, Math.min(100, parseFloat(e.target.value) || 0)))}
-                                  step="0.01"
-                                  min="0"
-                                  max="100"
-                                  placeholder="Min %"
-                                  className="h-10 text-sm"
-                                />
-                                <span className="text-sm font-medium text-foreground">%</span>
-                              </div>
-                            </div>
-                            <span className="text-muted-foreground">-</span>
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2">
-                                <Input
-                                  type="number"
-                                  value={sellingRangeMax}
-                                  onChange={(e) => setSellingRangeMax(Math.max(0, Math.min(100, parseFloat(e.target.value) || 0)))}
-                                  step="0.01"
-                                  min="0"
-                                  max="100"
-                                  placeholder="Max %"
-                                  className="h-10 text-sm"
-                                />
-                                <span className="text-sm font-medium text-foreground">%</span>
-                              </div>
-                            </div>
+                        <div className="space-y-2">
+                          <Label className="text-xs text-muted-foreground font-normal">Selling Range (%)</Label>
+                          <div className="flex items-center gap-2">
+                            <Input
+                              type="number"
+                              value={sellingRangeMin}
+                              onChange={(e) => setSellingRangeMin(Math.max(0, Math.min(100, parseFloat(e.target.value) || 0)))}
+                              step="0.01"
+                              min="0"
+                              max="100"
+                              placeholder="Min"
+                              className="h-9 text-sm"
+                            />
+                            <span className="text-muted-foreground">to</span>
+                            <Input
+                              type="number"
+                              value={sellingRangeMax}
+                              onChange={(e) => setSellingRangeMax(Math.max(0, Math.min(100, parseFloat(e.target.value) || 0)))}
+                              step="0.01"
+                              min="0"
+                              max="100"
+                              placeholder="Max"
+                              className="h-9 text-sm"
+                            />
                           </div>
                         </div>
 
                         {/* Startup Details Entry Method */}
                         <div className="space-y-3">
-                          <Label className="text-sm text-foreground">Startup Details</Label>
-                          <div className="flex items-center gap-3">
+                          <Label className="text-xs text-muted-foreground font-normal">Startup Details</Label>
+                          <div className="flex gap-2">
                             <Button
                               type="button"
                               variant={!isManualEntry ? "default" : "outline"}
                               size="sm"
                               onClick={() => setIsManualEntry(false)}
-                              className="flex-1"
+                              className="flex-1 h-9 text-xs"
                             >
-                              Username
+                              Auto Entry
                             </Button>
                             <Button
                               type="button"
                               variant={isManualEntry ? "default" : "outline"}
                               size="sm"
                               onClick={() => setIsManualEntry(true)}
-                              className="flex-1"
+                              className="flex-1 h-9 text-xs"
                             >
                               Manual Entry
                             </Button>
                           </div>
 
                           {!isManualEntry ? (
-                            <div className="space-y-2">
+                            <Input
+                              type="text"
+                              value={startupUsername}
+                              onChange={(e) => setStartupUsername(e.target.value)}
+                              placeholder="@username"
+                              className="h-9 text-sm"
+                            />
+                          ) : (
+                            <div className="space-y-3 pt-1">
+                              {/* Startup Username - Optional */}
                               <Input
                                 type="text"
                                 value={startupUsername}
                                 onChange={(e) => setStartupUsername(e.target.value)}
-                                placeholder="Enter startup username..."
-                                className="h-10 text-sm"
+                                placeholder="@username (optional)"
+                                className="h-9 text-sm"
                               />
-                              <p className="text-xs text-muted-foreground">
-                                Enter username to auto-fill startup details
-                              </p>
-                            </div>
-                          ) : (
-                            <div className="space-y-4 pt-2">
-                              {/* Manual Entry Fields */}
-                              <div className="space-y-2">
-                                <Label className="text-sm text-muted-foreground">Startup Username</Label>
-                                <Input
-                                  type="text"
-                                  value={startupUsername}
-                                  onChange={(e) => setStartupUsername(e.target.value)}
-                                  placeholder="@username"
-                                  className="h-10 text-sm"
-                                />
-                              </div>
+
+                              {/* Description */}
+                              <textarea
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                placeholder="Description..."
+                                className="w-full min-h-[70px] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 resize-none"
+                              />
 
                               {/* Video Upload */}
-                              <div className="space-y-2">
-                                <Label className="text-sm text-muted-foreground">Upload Video (Optional)</Label>
-                                <Input
-                                  type="text"
-                                  value={videoUrl}
-                                  onChange={(e) => setVideoUrl(e.target.value)}
-                                  placeholder="Video URL..."
-                                  className="h-10 text-sm"
+                              <div>
+                                <input
+                                  ref={videoInputRef}
+                                  type="file"
+                                  accept="video/*"
+                                  onChange={handleVideoUpload}
+                                  className="hidden"
                                 />
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => videoInputRef.current?.click()}
+                                  className="w-full h-9 text-xs gap-2"
+                                >
+                                  <Video className="w-3.5 h-3.5" />
+                                  {videoFile ? videoFile.name : "Upload Video"}
+                                </Button>
                               </div>
 
                               {/* Image Upload */}
                               <div className="space-y-2">
-                                <Label className="text-sm text-muted-foreground">Upload Images (Optional)</Label>
-                                <Input
-                                  type="text"
-                                  value={imageUrls.join(', ')}
-                                  onChange={(e) => setImageUrls(e.target.value.split(',').map(url => url.trim()).filter(Boolean))}
-                                  placeholder="Image URLs (comma separated)..."
-                                  className="h-10 text-sm"
+                                <input
+                                  ref={imageInputRef}
+                                  type="file"
+                                  accept="image/*"
+                                  onChange={handleImageUpload}
+                                  className="hidden"
                                 />
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => imageInputRef.current?.click()}
+                                  className="w-full h-9 text-xs gap-2"
+                                >
+                                  <ImageIcon className="w-3.5 h-3.5" />
+                                  Upload Images
+                                </Button>
+                                {imageUrls.length > 0 && (
+                                  <div className="flex flex-wrap gap-2">
+                                    {imageUrls.map((url, idx) => (
+                                      <div key={idx} className="relative w-16 h-16 rounded border border-border overflow-hidden group">
+                                        <img src={url} alt={`Upload ${idx + 1}`} className="w-full h-full object-cover" />
+                                        <button
+                                          onClick={() => removeImage(idx)}
+                                          className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                        >
+                                          <X className="w-4 h-4 text-white" />
+                                        </button>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
                               </div>
                             </div>
                           )}
@@ -649,7 +693,7 @@ const Trade = () => {
 
                         <Button
                           onClick={handleOpenTrade}
-                          className="w-full h-12 text-base font-semibold"
+                          className="w-full h-10 text-sm font-medium"
                         >
                           Open Trade
                         </Button>
@@ -704,15 +748,17 @@ const Trade = () => {
                         {(trade.videoUrl || trade.imageUrls.length > 0) && (
                           <div className="space-y-2">
                             {trade.videoUrl && (
-                              <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
-                                <p className="text-xs text-muted-foreground">Video: {trade.videoUrl}</p>
-                              </div>
+                              <video 
+                                src={trade.videoUrl} 
+                                controls 
+                                className="w-full aspect-video bg-muted rounded-lg"
+                              />
                             )}
                             {trade.imageUrls.length > 0 && (
-                              <div className="flex gap-2 overflow-x-auto">
+                              <div className="flex gap-2 overflow-x-auto pb-1">
                                 {trade.imageUrls.map((url, idx) => (
-                                  <div key={idx} className="w-20 h-20 bg-muted rounded-lg flex-shrink-0 flex items-center justify-center">
-                                    <p className="text-[10px] text-muted-foreground text-center px-1">Image {idx + 1}</p>
+                                  <div key={idx} className="w-20 h-20 bg-muted rounded-lg flex-shrink-0 overflow-hidden">
+                                    <img src={url} alt={`Trade image ${idx + 1}`} className="w-full h-full object-cover" />
                                   </div>
                                 ))}
                               </div>
@@ -1297,6 +1343,17 @@ const Trade = () => {
         )}
         </div>
       </main>
+
+      {/* Image Crop Modal */}
+      <ImageCropModal
+        imageUrl={cropImageUrl}
+        isOpen={isCropModalOpen}
+        onClose={() => {
+          setIsCropModalOpen(false);
+          setCropImageUrl("");
+        }}
+        onCropComplete={handleCropComplete}
+      />
 
       <BottomNav />
     </div>
