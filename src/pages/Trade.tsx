@@ -16,6 +16,8 @@ interface ActiveTrade {
   id: number;
   companyId: number;
   companyName: string;
+  companyAge: string;
+  revenueStatus: "revenue-generating" | "pre-revenue";
   description: string;
   startupUsername: string;
   sellingRangeMin: number;
@@ -345,6 +347,8 @@ const Trade = () => {
   const [expandedCompany, setExpandedCompany] = useState<number | null>(null);
   const [sellingRangeMin, setSellingRangeMin] = useState<number>(10);
   const [sellingRangeMax, setSellingRangeMax] = useState<number>(40);
+  const [companyAge, setCompanyAge] = useState<string>("");
+  const [revenueStatus, setRevenueStatus] = useState<"revenue-generating" | "pre-revenue">("pre-revenue");
   const [description, setDescription] = useState<string>("");
   const [startupUsername, setStartupUsername] = useState<string>("");
   const [isManualEntry, setIsManualEntry] = useState<boolean>(false);
@@ -444,6 +448,8 @@ const Trade = () => {
       id: Date.now(),
       companyId: company.id,
       companyName: company.name,
+      companyAge,
+      revenueStatus,
       description,
       startupUsername: startupUsername || company.name.toLowerCase().replace(/\s+/g, ''),
       sellingRangeMin,
@@ -460,6 +466,8 @@ const Trade = () => {
     setExpandedCompany(null);
     setSellingRangeMin(10);
     setSellingRangeMax(40);
+    setCompanyAge("");
+    setRevenueStatus("pre-revenue");
     setDescription("");
     setStartupUsername("");
     setIsManualEntry(false);
@@ -479,6 +487,8 @@ const Trade = () => {
       setExpandedCompany(trade.companyId);
       setSellingRangeMin(trade.sellingRangeMin);
       setSellingRangeMax(trade.sellingRangeMax);
+      setCompanyAge(trade.companyAge);
+      setRevenueStatus(trade.revenueStatus);
       setDescription(trade.description);
       setStartupUsername(trade.startupUsername);
       setIsManualEntry(trade.isManualEntry);
@@ -614,6 +624,15 @@ const Trade = () => {
                             />
                           ) : (
                             <div className="space-y-3 pt-1">
+                              {/* Company Age */}
+                              <Input
+                                type="text"
+                                value={companyAge}
+                                onChange={(e) => setCompanyAge(e.target.value)}
+                                placeholder="Company age (e.g., 1.5yr)"
+                                className="h-9 text-sm"
+                              />
+
                               {/* Startup Username - Optional */}
                               <Input
                                 type="text"
@@ -630,6 +649,30 @@ const Trade = () => {
                                 placeholder="Description..."
                                 className="w-full min-h-[70px] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 resize-none"
                               />
+
+                              {/* Revenue Status */}
+                              <div className="space-y-2">
+                                <div className="flex gap-2">
+                                  <Button
+                                    type="button"
+                                    variant={revenueStatus === "revenue-generating" ? "default" : "outline"}
+                                    size="sm"
+                                    onClick={() => setRevenueStatus("revenue-generating")}
+                                    className="flex-1 h-9 text-xs"
+                                  >
+                                    Revenue Generating
+                                  </Button>
+                                  <Button
+                                    type="button"
+                                    variant={revenueStatus === "pre-revenue" ? "default" : "outline"}
+                                    size="sm"
+                                    onClick={() => setRevenueStatus("pre-revenue")}
+                                    className="flex-1 h-9 text-xs"
+                                  >
+                                    Pre Revenue
+                                  </Button>
+                                </div>
+                              </div>
 
                               {/* Video Upload */}
                               <div>
@@ -716,8 +759,16 @@ const Trade = () => {
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
                               <h3 className="font-semibold text-foreground">{trade.companyName}</h3>
+                              {trade.companyAge && (
+                                <span className="text-xs text-muted-foreground">• {trade.companyAge}</span>
+                              )}
                             </div>
                             <p className="text-xs text-muted-foreground">@{trade.startupUsername}</p>
+                            
+                            {/* Revenue Status */}
+                            <Badge variant={trade.revenueStatus === "revenue-generating" ? "default" : "secondary"} className="mt-1.5 text-[10px] h-5">
+                              {trade.revenueStatus === "revenue-generating" ? "Revenue Generating" : "Pre Revenue"}
+                            </Badge>
                             
                             {/* Description - Show 1-2 lines */}
                             {trade.description && (
