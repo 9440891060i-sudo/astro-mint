@@ -110,8 +110,8 @@ const BottomNav = () => {
     <>
       {/* Mobile and iPad bottom nav */}
       {!shouldHideMobileNav && (
-        <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-lg border-t border-border/50 z-50 shadow-lg">
-        <div className="max-w-2xl mx-auto flex items-center justify-around h-16 px-2">
+        <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-background/90 backdrop-blur-md border-t border-border/30 z-50">
+        <div className="max-w-2xl mx-auto flex items-center justify-around h-14 px-2">
           {/* First two tabs */}
           {tabs.slice(0, 2).map((tab) => {
             const Icon = tab.icon;
@@ -123,33 +123,33 @@ const BottomNav = () => {
               <button
                 key={tab.id}
                 onClick={() => handleTabClick(tab)}
-                className="flex flex-col items-center justify-center gap-1 flex-1 transition-all duration-300"
+                className="flex flex-col items-center justify-center flex-1 transition-colors"
                 aria-label={tab.label}
               >
                 <Icon
-                  className={`transition-colors duration-300 ${
+                  className={`transition-colors ${
                     isActive 
-                      ? 'text-white fill-white' 
+                      ? 'text-foreground fill-foreground' 
                       : 'text-muted-foreground'
                   }`}
-                  strokeWidth={isActive ? 2.5 : 2}
-                  size={24}
+                  strokeWidth={2}
+                  size={22}
                   fill={isActive ? "currentColor" : "none"}
                 />
               </button>
             );
           })}
 
-          {/* Central mode toggle switch */}
+          {/* Central mode toggle */}
           <button
             onClick={toggleMode}
-            className="flex flex-col items-center justify-center gap-1 flex-1 transition-all duration-300"
+            className="flex flex-col items-center justify-center flex-1"
             aria-label="Toggle mode"
           >
-            <div className="relative w-14 h-7 bg-muted rounded-full p-1">
+            <div className="relative w-12 h-6 bg-muted rounded-full p-0.5">
               <div 
-                className={`absolute top-1 w-5 h-5 bg-primary rounded-full transition-transform duration-300 ease-out ${
-                  appMode === "left" ? "left-1" : "left-8"
+                className={`absolute top-0.5 w-5 h-5 bg-foreground rounded-full transition-transform duration-200 ease-out ${
+                  appMode === "left" ? "left-0.5" : "left-6"
                 }`}
               />
             </div>
@@ -166,17 +166,17 @@ const BottomNav = () => {
               <button
                 key={tab.id}
                 onClick={() => handleTabClick(tab)}
-                className="flex flex-col items-center justify-center gap-1 flex-1 transition-all duration-300"
+                className="flex flex-col items-center justify-center flex-1 transition-colors"
                 aria-label={tab.label}
               >
                 <Icon
-                  className={`transition-colors duration-300 ${
+                  className={`transition-colors ${
                     isActive 
-                      ? 'text-white fill-white' 
+                      ? 'text-foreground fill-foreground' 
                       : 'text-muted-foreground'
                   }`}
-                  strokeWidth={isActive ? 2.5 : 2}
-                  size={24}
+                  strokeWidth={2}
+                  size={22}
                   fill={isActive ? "currentColor" : "none"}
                 />
               </button>
